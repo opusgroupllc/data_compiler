@@ -5,6 +5,7 @@
 	<cfargument name="lstColumnNames" type="string" default="#arguments.qryData.getColumnList()#"/>
 	<cfargument name="lstColumnHeaders" type="string" default="#arguments.lstColumnNames#"/>
 	<cfargument name="strTableHeader" type="string" default=""/>
+	<cfargument name="bolShowRowCount" type="boolean" default="true"/>
 
 	<cfif listLen(arguments.lstColumnNames) NEQ listLen(arguments.lstColumnHeaders)>
 		<cfthrow message="Must have an equal number of column names and column headers."/>

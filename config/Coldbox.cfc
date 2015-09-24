@@ -64,7 +64,11 @@ Optional Methods
 
 			//Application Aspects
 			handlerCaching 			= false,
-			eventCaching			= false
+			eventCaching			= false,
+
+			//Application Helpers
+			applicationHelper = "includes/helpers/ApplicationHelper.cfm"
+
 		};
 
 		// environment settings, create a detectEnvironment() method to detect it yourself.

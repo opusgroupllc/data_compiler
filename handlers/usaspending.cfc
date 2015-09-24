@@ -10,7 +10,7 @@
 		<cfparam name="form.detail" default="b"/>
 
 		<cfif val(form.data_form_submitted)>
-			<cfset request.xmlXMLResponse = this.parseXMLResponse(
+			<cfset request.objData = this.parseXMLResponse(
 				strDetailLevel = form.detail
 				, strXMLData = this.getXMLResponse(
 					stcURLParams = {

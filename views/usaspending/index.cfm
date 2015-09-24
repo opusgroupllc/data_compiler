@@ -16,7 +16,19 @@
 	</form>
 	<hr/>
 	<cfif isDefined("form.data_form_submitted") AND val(form.data_form_submitted)>
-
-		<cfdump var="#request.xmlXMLResponse#"/>
+		<cfif form.detail IS 's'>
+			<cfloop list="#structKeyList(request.objData)#" index="variables.i">
+				#renderDataTable(
+					qryData = request.objData[variables.i]
+					, strTableHeader = variables.i
+				)#
+				<hr/>
+			</cfloop>
+		<cfelse>
+			#renderDataTable(
+				qryData = request.objData
+			)#
+		</cfif>
+		<!--- <cfdump var="#request.objData#"/> --->
 	</cfif>
 </cfoutput>
