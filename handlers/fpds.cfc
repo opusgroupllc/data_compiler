@@ -5,9 +5,10 @@
  --->
 <cfcomponent accessors="true" output="false" persistent="false">
 	<cffunction name="index">
-		<cfset request.xmlXMLResponse = parseXMLResponse(
+		<!--- <cfset request.xmlXMLResponse = parseXMLResponse(
 			getXMLResponse().fileContent
-		)/>
+		)/> --->
+		<cfset request.xmlXMLResponse = this.getXMLResponse()/>
 		<cfset event.setView("fpds/index")/>
 	</cffunction>
 
@@ -49,7 +50,7 @@
 			<cfhttpparam type="url" name="Binding" value="AwardBinding"/>
 			<cfhttpparam type="url" name="Soap-binding style" value="rpc"/>
 			<cfhttpparam type="url" name="TargetNameSpace" value="Award.wsdl"/>
-			<cfhttpparam type="xml" name="asdf" value="#this.createXMLRequestPacket()#"/>
+			<cfhttpparam type="xml" value="#this.createXMLRequestPacket()#"/>
 		</cfhttp>
 
 		<cfreturn local.stcXMLResponse/>
@@ -58,38 +59,24 @@
 
 	<cffunction name="createXMLRequestPacket">
 		<cfsavecontent variable="local.strXMLRequestPacket">
-			<schema targetNamespace="http://www.fpdsng.com/FPDS" elementFormDefault="qualified" version="1.4">
-				<annotation>
-					<documentation>
-						<history version="1.2">
-							* Using 1.2 version of Award.xsd
-						</history>
-						<history version="1.3">
-							* Created new version 1.3 03/19/2008
-							* Now uses 1.2 version of Template.xsd and 1.3 version of Award.xsd
-						</history>
-						<history version="1.4">
-							* Created new version 1.4 08/15/2009
-							* Now uses 1.4 version of Award.xsd; 1.3 Version of Template.xsd
-						</history>
-					</documentation>
-				</annotation>
-				<!-- import the required XSDs -->
-				<include schemaLocation="http://www.fpdsng.com/FPDS/schema/common/1.3/Template.xsd"/>
-				<include schemaLocation="http://www.fpdsng.com/FPDS/schema/DataCollection/contracts/1.4/Award.xsd"/>
-				<!-- define the complex types -->
-				<complexType name="awardTemplateType">
-					<complexContent>
-						<extension base="FPDS:templateType">
-							<sequence>
-								<element name="award" type="FPDS:awardType"/>
-							</sequence>
-						</extension>
-					</complexContent>
-				</complexType>
-				<element name="awardTemplate" type="FPDS:awardTemplateType"/>
-				<element name="awardTemplateSearchCriteria" type="FPDS:templateSearchCriteriaType"/>
-			</schema>
+			<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:m0="http://www.fpdsng.com/FPDS">
+				<SOAP-ENV:Body>
+					<m:get xmlns:m="urn:FADS.BusinessServices.DataCollection.Assistance" SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+						<authenticationKey>
+							<m0:userID></m0:userID>
+							<m0:password></m0:password>
+							<m0:serviceOriginatorID>String</m0:serviceOriginatorID>
+						</authenticationKey>
+						<assistanceID>
+							<m0:agencyID>String</m0:agencyID>
+							<m0:FAIN>String</m0:FAIN>
+							<m0:amendmentNumber>String</m0:amendmentNumber>
+							<m0:URI>String</m0:URI>
+							<m0:businessFundsIndicator>St</m0:businessFundsIndicator>
+						</assistanceID>
+					</m:get>
+				</SOAP-ENV:Body>
+			</SOAP-ENV:Envelope>
 		</cfsavecontent>
 		<cfreturn local.strXMLRequestPacket/>
 	</cffunction>
