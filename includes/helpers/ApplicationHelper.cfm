@@ -16,16 +16,22 @@
 			<table class="data_table" border="0" cellpadding="0" cellspacing="0">
 				<cfif len(trim(arguments.strTableHeader))>
 					<tr>
-						<th colspan="#listLen(arguments.lstColumnNames)#">#arguments.strTableHeader#</th>
+						<th colspan="#listLen(arguments.lstColumnNames) + (arguments.bolShowRowCount ? 1 : 0)#">#arguments.strTableHeader#</th>
 					</tr>
 				</cfif>
 				<tr>
+					<cfif arguments.bolShowRowCount>
+						<th>&nbsp;</th>
+					</cfif>
 					<cfloop list="#arguments.lstColumnHeaders#" index="local.strColumnHeader">
 						<th>#trim(local.strColumnHeader)#</th>
 					</cfloop>
 				</tr>
 				<cfloop query="#arguments.qryData#">
 					<tr>
+						<cfif arguments.bolShowRowCount>
+							<td>#arguments.qryData.currentRow#</td>
+						</cfif>
 						<cfloop list="#arguments.lstColumnNames#" index="local.strColumn">
 							<cfset local.strColumnValue = trim(evaluate("arguments.qryData.#local.strColumn#"))/>
 							<td>#len(local.strColumnValue) ? local.strColumnValue : "&nbsp;"#</td>

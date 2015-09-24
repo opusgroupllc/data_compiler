@@ -8,6 +8,9 @@
 	<cffunction name="index">
 		<cfparam name="form.data_form_submitted" default="0"/>
 		<cfparam name="form.detail" default="b"/>
+		<cfparam name="form.max_records" default="10"/>
+		<cfparam name="form.stateCode" default="TX"/>
+		<cfparam name="form.fiscal_year" default="2015"/>
 
 		<cfif val(form.data_form_submitted)>
 			<cfset request.objData = this.parseXMLResponse(
@@ -15,9 +18,9 @@
 				, strXMLData = this.getXMLResponse(
 					stcURLParams = {
 						detail = form.detail
-						, fiscal_year = 2015
-						, stateCode = "TX"
-						, max_records = 10
+						, fiscal_year = form.fiscal_year
+						, stateCode = form.stateCode
+						, max_records = form.max_records
 					}
 				).fileContent
 			)>
