@@ -78,8 +78,8 @@
 	<cfargument name="bolWrapValuesWithQuotes" type="boolean" default="false"/>
 	<cfargument name="intChartWidth" type="numeric" default="450"/>
 	<cfargument name="intChartHeight" type="numeric" default="450"/>
-	<cfargument name="intInnerRadius" type="numeric" default="150"/>
-	<cfargument name="intOuterRadius" type="numeric" default="105"/>
+	<cfargument name="strInnerRadius" type="string" default="150"/>
+	<cfargument name="strOuterRadius" type="string" default="105"/>
 
 
 	<cfsavecontent variable="local.strContent">
@@ -108,8 +108,8 @@
 					the overall chart size from the center to the outer edge while the inner radius
 					will define the size of the inner circle. --*/
 				var arc = d3.svg.arc()
-					.innerRadius(radius - #arguments.intInnerRadius#)
-					.outerRadius(radius - #arguments.intOuterRadius#);
+					.innerRadius(#arguments.strInnerRadius#)
+					.outerRadius(#arguments.strOuterRadius#);
 
 				/*-- Now that we have all of those important pieces, let's start putting it together.
 					Let's start with the layout and attach the values that we defined in our chartData array. --*/
