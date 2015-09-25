@@ -86,6 +86,7 @@
 					.attr("dy", ".25em")
 					.style("text-anchor", "middle")
 					.attr("fill", "##ffffff")
+					.style("display", "none")
 					.text(
 						function(d, i) {
 							return chartData[i].label;
@@ -101,7 +102,7 @@
 
 
 				/*-- Next we'll insert text and attach a class that we'll use in our CSS to style. --*/
-				svg.append("text")
+				/*-- svg.append("text")
 					.attr("dy", "-0.5em")
 					.style("text-anchor", "middle")
 					.attr("class", "inner-circle")
@@ -121,11 +122,27 @@
 						function(d) {
 							return 'is lots of fun!';
 						}
-					);
+					); --*/
+				svg.append("text")
+					.attr("dy", "0.0em")
+					.style("text-anchor", "middle")
+					.attr("class", "inner-circle-text")
+					.attr("fill", "##36454f")
+					.text("");
 
 				/*--  --*/
+				$(document).on(
+					"mouseover"
+					, ".arc"
+					, function() {
+						//alert($(this).children("text:first").html());
+						var strItemLabel = $(this).children("text:first").html();
+						$("##donut-chart").find(".inner-circle-text:first").html(
+							strItemLabel
+						);
+					}
+				);
 
-				/*--  --*/
 
 			</script>
 			<br />
