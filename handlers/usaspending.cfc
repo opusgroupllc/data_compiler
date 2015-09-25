@@ -9,7 +9,10 @@
 		<cfparam name="form.data_form_submitted" default="0"/>
 		<cfparam name="form.detail" default="b"/>
 		<cfparam name="form.max_records" default="10"/>
-		<cfparam name="form.stateCode" default="TX"/>
+		<cfparam name="form.stateCode" default=""/>
+		<cfparam name="form.company_name" default=""/>
+		<cfparam name="form.mod_agency" default=""/>
+		<cfparam name="form.maj_agency_cat" default=""/>
 		<cfparam name="form.fiscal_year" default="2015"/>
 
 		<cfif val(form.data_form_submitted)>
@@ -89,6 +92,7 @@
 				aryTotals = xmlSearch(
 					arguments.xmlXMLData, "/:usaspendingSearchResults/:data/:record/:totals/"
 				)
+				//arguments.xmlXMLData, "/:usaspendingSearchResults/:data/:records/:record/"
 				, aryExtentOfCompetition = xmlSearch(
 					arguments.xmlXMLData, "/:usaspendingSearchResults/:data/:record/:extent_of_competition/"
 				)
