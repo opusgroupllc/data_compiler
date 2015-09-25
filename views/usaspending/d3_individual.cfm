@@ -6,8 +6,27 @@
 
 	<div style="float: right; ">
 		<cfif isDefined("request.objData")>
-			<svg id="donut-chart"></svg>
 
+			#renderD3DonutChart(
+				strChartId = "sb_donut_uncategorized"
+				, strLabelColumn = "mod_parent"
+				, strValueColumn = "obligatedamount"
+				, intChartWidth = 450
+				, intChartHeight = 450
+				, intInnerRadius = 150
+				, intOuterRadius = 105
+			)#
+
+			#renderD3DonutChart(
+				strChartId = "sb_donut_8A"
+				, strLabelColumn = "mod_parent"
+				, strValueColumn = "obligatedamount"
+				, intChartWidth = 450
+				, intChartHeight = 450
+				, intInnerRadius = 150
+				, intOuterRadius = 105
+			)#
+<!--- 			<svg id="donut-chart"></svg>
 			<script>
 				/*-- Init the data: --*/
 				var chartData = #serializeD3JSON(
@@ -199,9 +218,7 @@
 						}
 					}
 				);
-
-
-			</script>
+			</script> --->
 			<br />
 			#renderDataTable(
 				qryData = request.objData
