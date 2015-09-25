@@ -16,15 +16,17 @@
 		<cfparam name="form.fiscal_year" default="2015"/>
 
 		<cfif val(form.data_form_submitted)>
+			<cfset local.stcURLParams = structNew()/>
+			<cfloop list="detail,max_records,stateCode,company_name,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
+				<cfif structKeyExists(form, local.i) AND len(trim(form[local.i]))>
+					<cfset local.stcURLParams[local.i] = form[local.i]/>
+				</cfif>
+			</cfloop>
+
 			<cfset request.objData = this.parseXMLResponse(
 				strDetailLevel = form.detail
 				, strXMLData = this.getXMLResponse(
-					stcURLParams = {
-						detail = form.detail
-						, fiscal_year = form.fiscal_year
-						, stateCode = form.stateCode
-						, max_records = form.max_records
-					}
+					stcURLParams = local.stcURLParams
 				).fileContent
 			)>
 		</cfif>

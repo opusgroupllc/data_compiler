@@ -1,5 +1,14 @@
-
-
+/*
+.navbar {
+	background: #000379;
+}
+.navbar a {
+	color: #eaebff; 
+}
+.navbar a:hover, .navbar a:active {
+	color: #000379; 
+}
+*/
 .data_table, .data_table th, .data_table td {
 	border: solid 1px #cccccc; 
 	border-collapse: collapsed; 
@@ -8,7 +17,9 @@
 	padding: 3px; 
 }
 
-
+#data_form {
+	width: 250px; 
+}
 
 .form-group-inline-left-padding label {
 	padding-left: 50px; 
