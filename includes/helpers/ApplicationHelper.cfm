@@ -45,3 +45,28 @@
 	<cfreturn local.strHTML/>
 
 </cffunction>
+<cffunction name="serializeD3JSON" returnType="string">
+	<cfargument name="qryData" type="query" required="true"/>
+	<cfargument name="strLabelColumn" type="string" required="true"/>
+	<cfargument name="strValueColumn" type="string" required="true"/>
+	<cfargument name="bolWrapValuesWithQuotes" type="boolean" default="true"/>
+	<cfargument name="strLink" type="string" default="javascript: void(0); "/>
+
+	<cfset local.strQuotes = arguments.bolWrapValuesWithQuotes ? """" : ""/>
+
+	<cfsavecontent variable="local.strData">
+		<cfoutput>
+			[
+				<cfloop query="arguments.qryData">
+					#arguments.qryData.currentRow GT 1 ? ", " : ""#{
+						"label": "#evaluate("arguments.qryData.#arguments.strLabelColumn#")#"
+						, "value": #local.strQuotes##evaluate("arguments.qryData.#arguments.strValueColumn#")##local.strQuotes#
+						, "link": "#arguments.strLink#"
+					}
+				</cfloop>
+			]
+		</cfoutput>
+	</cfsavecontent>
+
+	<cfreturn local.strData/>
+</cffunction>

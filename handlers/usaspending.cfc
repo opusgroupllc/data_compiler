@@ -33,6 +33,34 @@
 		<cfset event.setView("usaspending/index")/>
 	</cffunction>
 
+	<cffunction name="d3_individual">
+		<cfparam name="form.data_form_submitted" default="0"/>
+		<cfparam name="form.detail" default="b"/>
+		<cfparam name="form.max_records" default="10"/>
+		<cfparam name="form.stateCode" default=""/>
+		<cfparam name="form.company_name" default=""/>
+		<cfparam name="form.mod_agency" default=""/>
+		<cfparam name="form.maj_agency_cat" default=""/>
+		<cfparam name="form.fiscal_year" default="2015"/>
+
+		<cfif val(form.data_form_submitted)>
+			<cfset local.stcURLParams = structNew()/>
+			<cfloop list="detail,max_records,stateCode,company_name,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
+				<cfif structKeyExists(form, local.i) AND len(trim(form[local.i]))>
+					<cfset local.stcURLParams[local.i] = form[local.i]/>
+				</cfif>
+			</cfloop>
+
+			<cfset request.objData = this.parseXMLResponse(
+				strDetailLevel = form.detail
+				, strXMLData = this.getXMLResponse(
+					stcURLParams = local.stcURLParams
+				).fileContent
+			)>
+		</cfif>
+		<cfset event.setView("usaspending/d3_individual")/>
+	</cffunction>
+
 	<cffunction name="getXMLResponse" returnType="Struct">
 		<cfargument name="stcURLParams" type="struct" required="true"/>
 

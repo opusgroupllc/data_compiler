@@ -21,7 +21,9 @@
 	// MY Routes
 	addRoute(pattern = "/openfda", handler = "openfda", action = "index");
 	addRoute(pattern = "/fpds", handler = "fpds", action = "index");
-	addRoute(pattern = "/usaspending", handler = "usaspending", action = "index");
+
+	addRoute(pattern = "/usaspending/:action?", handler = "usaspending", action = "index");
+	addRoute(pattern = "/usaspending/:action?", handler = "usaspending", action = "d3_individual");
 
 	// Your Application Routes
 	addRoute(pattern=":handler/:action?");

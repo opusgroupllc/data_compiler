@@ -18,7 +18,9 @@
 }
 
 #data_form {
-	width: 250px; 
+	width: 250px;
+	/*height: 200px;  
+	border: solid 1px #cccccc;*/ 
 }
 
 .form-group-inline-left-padding label {
