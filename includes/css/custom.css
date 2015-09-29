@@ -42,7 +42,7 @@
 }
 #data_form {
 	/*border: solid 1px #ff0000; */
-	float: left; 
+	float: left;  
 	width: 260px;  
 	margin: 5px; 
 	padding: 15px; 
@@ -64,6 +64,10 @@
 .multi_series_line_chart {
 	display: inline; 
 	float: left; 
+	border: solid 1px #cccccc;
+	border-radius: 5px;  
+	margin: 5px; 
+	padding: 5px; 
 }
 
 .multi_series_line_chart .axis path

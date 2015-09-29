@@ -47,24 +47,53 @@
 </cffunction>
 <cffunction name="serializeD3JSON" returnType="string">
 	<cfargument name="qryData" type="query" required="true"/>
-	<cfargument name="strLabelColumn" type="string" required="true"/>
-	<cfargument name="strValueColumn" type="string" required="true"/>
+	<cfargument name="strLabelColumn" type="string" default=""/>
+	<cfargument name="strValueColumn" type="string" default=""/>
+	<cfargument name="strValueColumnX" type="string" default=""/>
+	<cfargument name="strValueColumnY" type="string" default=""/>
 	<cfargument name="bolWrapValuesWithQuotes" type="boolean" default="true"/>
+	<cfargument name="bolWrapValuesWithQuotesX" type="boolean" default="true"/>
+	<cfargument name="bolWrapValuesWithQuotesY" type="boolean" default="true"/>
 	<cfargument name="strLink" type="string" default="javascript: void(0); "/>
 
+	<cfif NOT (
+		(
+			len(trim(arguments.strLabelColumn)) AND len(trim(arguments.strValueColumn))
+			AND NOT len(trim(arguments.strValueColumnX)) AND NOT len(trim(arguments.strValueColumnY))
+		) OR (
+			NOT len(trim(arguments.strLabelColumn)) AND NOT len(trim(arguments.strValueColumn))
+			AND len(trim(arguments.strValueColumnX)) AND len(trim(arguments.strValueColumnY))
+		)
+	)>
+		<cfthrow message="You must supply either the strLabelColumn and strValueColumn arguments, OR the strValueColumnX and strValueColumnY arguments."/>
+	</cfif>
+
 	<cfset local.strQuotes = arguments.bolWrapValuesWithQuotes ? """" : ""/>
+	<cfset local.strQuotesX = arguments.bolWrapValuesWithQuotesX ? """" : ""/>
+	<cfset local.strQuotesY = arguments.bolWrapValuesWithQuotesY ? """" : ""/>
 
 	<cfsavecontent variable="local.strData">
 		<cfoutput>
-			[
-				<cfloop query="arguments.qryData">
-					#arguments.qryData.currentRow GT 1 ? ", " : ""#{
-						"label": "#evaluate("arguments.qryData.#arguments.strLabelColumn#")#"
-						, "value": #local.strQuotes##evaluate("arguments.qryData.#arguments.strValueColumn#")##local.strQuotes#
-						, "link": "#arguments.strLink#"
-					}
-				</cfloop>
-			]
+			<cfif len(trim(arguments.strLabelColumn)) AND len(trim(arguments.strValueColumn))>
+				[
+					<cfloop query="arguments.qryData">
+						#arguments.qryData.currentRow GT 1 ? ", " : ""#{
+							"label": "#evaluate("arguments.qryData.#arguments.strLabelColumn#")#"
+							, "value": #local.strQuotes##evaluate("arguments.qryData.#arguments.strValueColumn#")##local.strQuotes#
+							, "link": "#arguments.strLink#"
+						}
+					</cfloop>
+				]
+			<cfelseif len(trim(arguments.strValueColumnX)) AND len(trim(arguments.strValueColumnY))>
+				[
+					<cfloop query="arguments.qryData">
+						#arguments.qryData.currentRow GT 1 ? ", " : ""#{
+							"#arguments.strValueColumnX#": #local.strQuotesX##evaluate("arguments.qryData.#arguments.strValueColumnX#")##local.strQuotesX#
+							, "#arguments.strValueColumnY#": #local.strQuotesY##evaluate("arguments.qryData.#arguments.strValueColumnY#")##local.strQuotesY#
+						}
+					</cfloop>
+				]
+			</cfif>
 		</cfoutput>
 	</cfsavecontent>
 
@@ -291,115 +320,89 @@
 
 <cffunction name="renderD3MultiSeriesLineChart" returnType="string">
 	<cfargument name="strChartId" type="string" required="true"/>
-	<!--- <cfargument name="strLabelColumn" type="string" required="true"/>
-	<cfargument name="strValueColumn" type="string" required="true"/> --->
-	<cfargument name="bolWrapValuesWithQuotes" type="boolean" default="false"/>
+	<cfargument name="strSmallBusinessCategory" type="string" default=""/>
+	<cfargument name="strValueColumnX" type="string" required="true"/>
+	<cfargument name="strValueColumnY" type="string" required="true"/>
+	<cfargument name="bolWrapValuesWithQuotesX" type="boolean" default="false"/>
+	<cfargument name="bolWrapValuesWithQuotesY" type="boolean" default="false"/>
 	<cfargument name="intChartWidth" type="numeric" default="900"/>
 	<cfargument name="intChartHeight" type="numeric" default="500"/>
 
+	<cfset local.strQuotesX = arguments.bolWrapValuesWithQuotesX ? """" : ""/>
+	<cfset local.strQuotesY = arguments.bolWrapValuesWithQuotesY ? """" : ""/>
+
+	<cfset local.strQueryName = "objData#len(arguments.strSmallBusinessCategory) ? '_#arguments.strSmallBusinessCategory#' : ''#"/>
 	<cfsavecontent variable="local.strContent">
 		<cfoutput>
 			<svg id="#arguments.strChartId#"></svg>
 			<script>
-				var chartData = #serializeD3TSV(
-					qryData = request.stcData.objDataobjData_For_MultiSeriesLineChart
-					, strLabelColumn = "#arguments.strLabelColumn#"
-					, strValueColumn = "#arguments.strValueColumn#"
-					, bolWrapValuesWithQuotes = #arguments.bolWrapValuesWithQuotes#
+				var chartData = #serializeD3JSON(
+					//qryData = request.stcData.objDataobjData_For_MultiSeriesLineChart
+					qryData = request.stcData[local.strQueryName]
+					, strValueColumnX = arguments.strValueColumnX
+					, strValueColumnY = arguments.strValueColumnY
+					, bolWrapValuesWithQuotesX = arguments.bolWrapValuesWithQuotesX
+					, bolWrapValuesWithQuotesY = arguments.bolWrapValuesWithQuotesY
 				)#;
 
-				var margin = {top: 20, right: 80, bottom: 30, left: 50},
-				    width = #arguments.intChartWidth# - margin.left - margin.right,
-				    height = #arguments.intChartHeight# - margin.top - margin.bottom;
-
-				var parseDate = d3.time.format("%Y%m%d").parse;
-
-				var x = d3.time.scale()
-				    .range([0, width]);
-
-				var y = d3.scale.linear()
-				    .range([height, 0]);
-
-				var color = d3.scale.category10();
-
-				var xAxis = d3.svg.axis()
-				    .scale(x)
-				    .orient("bottom");
-
-				var yAxis = d3.svg.axis()
-				    .scale(y)
-				    .orient("left");
-
-				var line = d3.svg.line()
-				    .interpolate("basis")
-				    .x(function(d) { return x(d.signeddate); })
-				    .y(function(d) { return y(d.obligatedamount); });
-
-				var svg = d3.select("body").append("svg")
-				    .attr("width", width + margin.left + margin.right)
-				    .attr("height", height + margin.top + margin.bottom)
-				  .append("g")
-				    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-				d3.tsv("data.tsv"
-					, function(error, data) {
-						if (error) throw error;
-
-						color.domain(d3.keys(data[0]).filter(function(key) { return key !== "signeddate"; }));
-
-						data.forEach(function(d) {
-						  d.signeddate = parseDate(d.signeddate);
-						});
-
-						var cities = color.domain().map(function(name) {
-						  return {
-						    name: name,
-						    values: data.map(function(d) {
-						      return {signeddate: d.signeddate, obligatedamount: +d[name]};
-						    })
-						  };
-						});
-
-						x.domain(d3.extent(data, function(d) { return d.signeddate; }));
-
-						y.domain([
-						  d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.obligatedamount; }); }),
-						  d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.obligatedamount; }); })
-						]);
-
-						svg.append("g")
-						    .attr("class", "x axis")
-						    .attr("transform", "translate(0," + height + ")")
-						    .call(xAxis);
-
-						svg.append("g")
-						    .attr("class", "y axis")
-						    .call(yAxis)
-						    .append("text")
-						    .attr("transform", "rotate(-90)")
-						    .attr("y", 6)
-						    .attr("dy", ".71em")
-						    .style("text-anchor", "end")
-						    .text("Obligated Amount");
-
-						var small_business_category_txt = svg.selectAll(".small_business_category_txt")
-						    .data(cities)
-						 	.enter().append("g")
-						    .attr("class", "small_business_category_txt");
-
-						small_business_category_txt.append("path")
-						    .attr("class", "line")
-						    .attr("d", function(d) { return line(d.values); })
-						    .style("stroke", function(d) { return color(d.name); });
-
-						small_business_category_txt.append("text")
-						    .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-						    .attr("transform", function(d) { return "translate(" + x(d.value.signeddate) + "," + y(d.value.obligatedamount) + ")"; })
-						    .attr("x", 3)
-						    .attr("dy", ".35em")
-						    .text(function(d) { return d.name; });
+				/*-- Next, let's define some constants like width, height, left margin, etc., which we'll use while creating the graph. --*/
+				var vis = d3.select("##sb_multi_series_line_chart")
+					, WIDTH = #arguments.intChartWidth#
+					, HEIGHT = #arguments.intChartHeight#
+					, MARGINS = {
+						top: 20
+						, right: 20
+						, bottom: 20
+						, left: 50
 					}
-				);
+					, xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([
+						<!--- #("min(listQualify(valueList(request.stcData.#local.strQueryName#.#strValueColumnX#), """"))")# --->
+						#min(1, 2)#
+						<!--- #min(evaluate("valueList(request.stcData.#local.strQueryName#.#strValueColumnX#)"))#
+						, #max(evaluate("valueList(request.stcData.#local.strQueryName#.#strValueColumnX#)"))#
+					])
+					, yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([
+						#min(evaluate("valueList(request.stcData.#local.strQueryName#.#strValueColumnY#)"))#
+						, #max(evaluate("valueList(request.stcData.#local.strQueryName#.#strValueColumnY#)"))# --->
+					])
+					/*-- Next, let's create the axes using the scales defined in the above code. --*/
+					, xAxis = d3.svg.axis().scale(xScale)
+					, yAxis = d3.svg.axis().scale(yScale);
+
+				/*-- Next, append the created X axis to the svg container. --*/
+				vis.append("svg:g").call(xAxis);
+
+				/*-- While appending the X axis to the SVG container, use the transform property to move the axis downwards. --*/
+				vis.append("svg:g")
+					.attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
+					.call(xAxis);
+
+				/*-- Now, let's add the Y Axis. --*/
+				vis.append("svg:g").call(yAxis);
+
+				/*-- Change the orientation of the above shown Y axis to the left. --*/
+				yAxis = d3.svg.axis()
+					.scale(yScale)
+					.orient("left");
+
+				/*-- Apply D3 transform while trying to append the Y axis to the SVG container: --*/
+				vis.append("svg:g")
+					.attr("transform", "translate(" + (MARGINS.left) + ",0)")
+					.call(yAxis);
+
+				/*-- Specify x and y coordinates for the line as per the xScale and yScale defined earlier. --*/
+				var lineGen = d3.svg.line()
+					.x(function(d) { return xScale(d.#arguments.strValueColumnX#); })
+					.y(function(d) { return yScale(d.#arguments.strValueColumnY#); });
+
+				/*-- Append a line path to svg and map the data to the plotting space using the lineGen function.
+					Also specify a few attributes for the line such as stroke color, stroke-width, etc. --*/
+				vis.append('svg:path')
+					.attr('d', lineGen(chartData))
+					.attr('stroke', 'green')
+					.attr('stroke-width', 2)
+					.attr('fill', 'none');
+
 			</script>
 		</cfoutput>
 	</cfsavecontent>

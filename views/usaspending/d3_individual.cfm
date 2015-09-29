@@ -19,12 +19,18 @@
 		<div class="multi_series_line_chart">
 			#renderD3MultiSeriesLineChart(
 				strChartId = "sb_multi_series_line_chart"
-				, intChartWidth = 900
+				, strSmallBusinessCategory = "none"
+				, strValueColumnX = "signeddate"
+				, strValueColumnY = "obligatedamount"
+				, bolWrapValuesWithQuotesX = true
+				, intChartWidth = 1000
 				, intChartHeight = 500
 			)#
 		</div>
+		<cfset variables.iCount = 0/>
 		<cfloop list="none,8a,womanOwned,smallDisAdv,disabledVetOwned,HUBZone" index="variables.i">
-			<div class="donut_chart">
+			<cfset variables.iCount++/>
+			<div class="donut_chart" style="#variables.iCount EQ 1 ? 'clear: left; ' : ''#">
 				#renderD3DonutChart(
 					strChartId = "sb_donut_#variables.i#"
 					, strSmallBusinessCategory = variables.i
