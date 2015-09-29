@@ -69,6 +69,45 @@
 					stcURLParams = local.stcURLParams
 				).fileContent
 			)>
+
+			<!--- ----------------------------------------------------------------------------------------------- --->
+			<cfset local.lstFieldNames = request.stcData.objData.getColumnList()/>
+			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
+				SELECT 'None' AS small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_none
+				UNION ALL
+				SELECT '8A' AS small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_8a
+			</cfquery>
+			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
+				SELECT small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_For_MultiSeriesLineChart
+				UNION ALL
+				SELECT 'Woman Owned' AS small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_womanOwned
+			</cfquery>
+			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
+				SELECT small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_For_MultiSeriesLineChart
+				UNION ALL
+				SELECT 'Small Disadvantaged' AS small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_smallDisadv
+			</cfquery>
+			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
+				SELECT small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_For_MultiSeriesLineChart
+				UNION ALL
+				SELECT 'Disabled Veteran Owned' AS small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_disabledVetOwned
+			</cfquery>
+			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
+				SELECT small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_For_MultiSeriesLineChart
+				UNION ALL
+				SELECT 'HUBZone' AS small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_HUBZone
+			</cfquery>
+			<!--- ----------------------------------------------------------------------------------------------- --->
 		</cfif>
 		<!--- <cfset request.qryBranches = this.getBranches()/> --->
 		<cfset request.qryAgencyCodes = this.getAgencyCodes()/>

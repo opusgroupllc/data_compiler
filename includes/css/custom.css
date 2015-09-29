@@ -57,3 +57,28 @@
 .form-group-inline-left-padding label {
 	padding-left: 50px; 
 }
+
+
+
+
+.multi_series_line_chart {
+	display: inline; 
+	float: left; 
+}
+
+.multi_series_line_chart .axis path
+, .multi_series_line_chart .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.multi_series_line_chart .x.axis path {
+  display: none;
+}
+
+.multi_series_line_chart .line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}

@@ -16,6 +16,13 @@
 			, strOuterRadius = "100"
 		}/>
 
+		<div class="multi_series_line_chart">
+			#renderD3MultiSeriesLineChart(
+				strChartId = "sb_multi_series_line_chart"
+				, intChartWidth = 900
+				, intChartHeight = 500
+			)#
+		</div>
 		<cfloop list="none,8a,womanOwned,smallDisAdv,disabledVetOwned,HUBZone" index="variables.i">
 			<div class="donut_chart">
 				#renderD3DonutChart(
@@ -48,7 +55,7 @@
 
 		<div class="data_table_div">
 			#renderDataTable(
-				qryData = request.stcData.objData
+				qryData = request.stcData.objData_For_MultiSeriesLineChart
 			)#
 		</div>
 	</cfif>
