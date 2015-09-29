@@ -35,29 +35,44 @@
 
 	<cffunction name="d3_individual">
 		<cfparam name="form.data_form_submitted" default="0"/>
-		<cfparam name="form.detail" default="b"/>
+		<cfparam name="form.detail" default="c"/>
 		<cfparam name="form.max_records" default="10"/>
 		<cfparam name="form.stateCode" default=""/>
-		<cfparam name="form.company_name" default=""/>
+		<!--- <cfparam name="form.agency_id" default="0"/> --->
 		<cfparam name="form.mod_agency" default=""/>
 		<cfparam name="form.maj_agency_cat" default=""/>
 		<cfparam name="form.fiscal_year" default="2015"/>
 
 		<cfif val(form.data_form_submitted)>
+			<!--- <cfdump var="#form#"> --->
+
 			<cfset local.stcURLParams = structNew()/>
-			<cfloop list="detail,max_records,stateCode,company_name,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
+			<cfloop list="detail,max_records,stateCode,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
 				<cfif structKeyExists(form, local.i) AND len(trim(form[local.i]))>
 					<cfset local.stcURLParams[local.i] = form[local.i]/>
 				</cfif>
 			</cfloop>
 
-			<cfset request.objData = this.parseXMLResponse(
+			<cfset request.stcData = structNew()/>
+			<cfloop list="none,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
+				<cfset request.stcData["objData_#local.i#"] = this.parseXMLResponse(
+					strDetailLevel = form.detail
+					, strXMLData = this.getXMLResponse(
+						stcURLParams = local.stcURLParams
+					).fileContent
+					, strSmallBusinessCategory = local.i
+				)>
+			</cfloop>
+			<cfset request.stcData["objData"] = this.parseXMLResponse(
 				strDetailLevel = form.detail
 				, strXMLData = this.getXMLResponse(
 					stcURLParams = local.stcURLParams
 				).fileContent
 			)>
 		</cfif>
+		<!--- <cfset request.qryBranches = this.getBranches()/> --->
+		<cfset request.qryAgencyCodes = this.getAgencyCodes()/>
+		<!--- <cfset request.qryBranchesAndAgencyCodes = this.getBranchesAndAgencyCodes()/> --->
 		<cfset event.setView("usaspending/d3_individual")/>
 	</cffunction>
 
@@ -79,22 +94,26 @@
 	<cffunction name="parseXMLResponse" returnType="any">
 		<cfargument name="strDetailLevel" type="string" required="true"/>
 		<cfargument name="strXMLData" type="string" required="true"/>
+		<cfargument name="strSmallBusinessCategory" type="string" default=""/>
 
 		<cfswitch expression="#arguments.strDetailLevel#">
 			<cfcase value="s">
-				<cfreturn this.parseXMLResponseSummary(xmlParse(arguments.strXMLData))/>
+				<cfreturn this.parseXMLResponseSummary(xmlXMLData = xmlParse(arguments.strXMLData))/>
 			</cfcase>
 			<cfcase value="l">
-				<cfreturn this.parseXMLResponseLow(xmlParse(arguments.strXMLData))/>
+				<cfreturn this.parseXMLResponseLow(xmlXMLData = xmlParse(arguments.strXMLData))/>
 			</cfcase>
 			<cfcase value="m">
-				<cfreturn this.parseXMLResponseMedium(xmlParse(arguments.strXMLData))/>
+				<cfreturn this.parseXMLResponseMedium(xmlXMLData = xmlParse(arguments.strXMLData))/>
 			</cfcase>
 			<cfcase value="b">
-				<cfreturn this.parseXMLResponseBasic(xmlParse(arguments.strXMLData))/>
+				<cfreturn this.parseXMLResponseBasic(xmlXMLData = xmlParse(arguments.strXMLData))/>
 			</cfcase>
 			<cfcase value="c">
-				<cfreturn this.parseXMLResponseComplete(xmlParse(arguments.strXMLData))/>
+				<cfreturn this.parseXMLResponseComplete(
+					xmlXMLData = xmlParse(arguments.strXMLData)
+					, strSmallBusinessCategory = arguments.strSmallBusinessCategory
+				)/>
 			</cfcase>
 			<cfdefaultcase>
 				<cfreturn "No matching detail level."/>
@@ -354,6 +373,14 @@
 
 	<cffunction name="parseXMLResponseComplete" returnType="query">
 		<cfargument name="xmlXMLData" type="xml" required="true"/>
+		<cfargument name="strSmallBusinessCategory" type="string" default=""/>
+
+		<cfset local.lstSmallBusinessCategories = "none,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone"/>
+		<cfif len(arguments.strSmallBusinessCategory)
+			AND NOT listFindNoCase(local.lstSmallBusinessCategories, arguments.strSmallBusinessCategory)
+		>
+			<cfthrow message="Only the following values are allowed for arguments.strSmallBusinessCategory: #local.lstSmallBusinessCategories#, or you can leave it blank for all."/>
+		</cfif>
 
 		<cfscript>
 			<!--- Drill down as far as possible to the actual data records: Note: Had to use the ":" before each node in the path due
@@ -572,6 +599,76 @@
 			</cfloop>
 		</cfloop>
 
+		<cfif len(arguments.strSmallBusinessCategory)>
+			<cfquery name="local.qryXMLData" dbtype="query">
+				SELECT *
+				FROM local.qryXMLData
+				<!--- small business???? --->
+				<cfswitch expression="#arguments.strSmallBusinessCategory#">
+					<cfcase value="none">
+						WHERE SRDVOBFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+						AND firm8AFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+						AND HUBZoneFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+						AND womenOwnedFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+						AND SDBFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+					</cfcase>
+					<cfcase value="disabledVetOwned">
+						WHERE SRDVOBFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+					</cfcase>
+					<cfcase value="8a">
+						WHERE firm8AFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+					</cfcase>
+					<cfcase value="HUBZone">
+						WHERE HUBZoneFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+					</cfcase>
+					<cfcase value="womanOwned">
+						WHERE womenOwnedFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+					</cfcase>
+					<cfcase value="smallDisadv">
+						WHERE SDBFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+					</cfcase>
+				</cfswitch>
+			</cfquery>
+		</cfif>
+
 		<cfreturn local.qryXMLData/>
 	</cffunction>
+
+	<cffunction name="getBranches" returnType="query">
+		<cfquery name="local.qryData" datasource="data_compiler">
+			SELECT *
+			FROM "branch"
+			ORDER BY "branch_name_txt"
+		</cfquery>
+		<cfreturn local.qryData/>
+	</cffunction>
+
+	<cffunction name="getAgencyCodes" returnType="query">
+		<cfargument name="intBranchID" type="numeric" default="0"/>
+		<cfquery name="local.qryData" datasource="data_compiler">
+			SELECT *
+			FROM "OMB_agency_bureau_and_treasury_codes"
+			<cfif arguments.intBranchID>
+				WHERE branch_id = <cfqueryparam value="#arguments.intBranchID#" cfsqltype="cf_sql_bigint"/>
+			</cfif>
+			ORDER BY "agency_name_txt"
+		</cfquery>
+		<cfreturn local.qryData/>
+	</cffunction>
+
+	<cffunction name="getBranchesAndAgencyCodes" returnType="query">
+		<cfargument name="intBranchID" type="numeric" default="0"/>
+		<cfquery name="local.qryData" datasource="data_compiler">
+			SELECT "b"."branch_name_txt", "oabatc"."id" AS "agency_id", "oabatc".*
+			FROM "branch" b
+				INNER JOIN "OMB_agency_bureau_and_treasury_codes" oabatc
+					ON "oabatc"."branch_id" = "b"."id"
+			<cfif arguments.intBranchID>
+				WHERE "branch_id" = <cfqueryparam value="#arguments.intBranchID#" cfsqltype="cf_sql_bigint"/>
+			</cfif>
+			ORDER BY "branch_name_txt", "agency_name_txt"
+		</cfquery>
+		<cfreturn local.qryData/>
+	</cffunction>
+
 </cfcomponent>

@@ -73,6 +73,7 @@
 
 <cffunction name="renderD3DonutChart" returnType="string">
 	<cfargument name="strChartId" type="string" required="true"/>
+	<cfargument name="strSmallBusinessCategory" type="string" default=""/>
 	<cfargument name="strLabelColumn" type="string" required="true"/>
 	<cfargument name="strValueColumn" type="string" required="true"/>
 	<cfargument name="bolWrapValuesWithQuotes" type="boolean" default="false"/>
@@ -88,7 +89,7 @@
 			<script>
 				/*-- Init the data: --*/
 				var chartData = #serializeD3JSON(
-					qryData = request.objData
+					qryData = request.stcData["objData#len(arguments.strSmallBusinessCategory) ? '_#arguments.strSmallBusinessCategory#' : ''#"]
 					, strLabelColumn = "#arguments.strLabelColumn#"
 					, strValueColumn = "#arguments.strValueColumn#"
 					, bolWrapValuesWithQuotes = #arguments.bolWrapValuesWithQuotes#
