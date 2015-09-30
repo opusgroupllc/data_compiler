@@ -54,7 +54,6 @@
 		}/>
 
 		<cfif val(form.data_form_submitted)>
-			<!--- <cfdump var="#form#"> --->
 
 			<cfset local.stcURLParams = structNew()/>
 			<cfloop list="detail,max_records,stateCode,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
@@ -64,65 +63,29 @@
 			</cfloop>
 
 			<cfset request.stcData = structNew()/>
-			<!--- <cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
-				<cfset request.stcData["objData_#local.i#"] = this.parseXMLResponse(
-					strDetailLevel = form.detail
-					, strXMLData = this.getXMLResponse(
-						stcURLParams = local.stcURLParams
-					).fileContent
-					, strSmallBusinessCategory = local.i
-				)>
-			</cfloop> --->
 			<cfset request.stcData.objData = this.parseXMLResponse(
 				strDetailLevel = form.detail
 				, strXMLData = this.getXMLResponse(
 					stcURLParams = local.stcURLParams
 				).fileContent
-			)>
-			<cfset variables.stcData = this.groupChartDataBySmallBusinessCategory(qryData = request.stcData.objData)/>
-			<cfloop list="#structKeyList(variables.stcData)#" index="variables.i">
-				<cfset request.stcData[variables.i] = variables.stcData[variables.i]/>
-			</cfloop>
-			<cfset structDelete(variables, "stcData")/>
+			)/>
 
 			<!--- ----------------------------------------------------------------------------------------------- --->
-<!--- 			<cfset local.lstFieldNames = request.stcData.objData.getColumnList()/>
-			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
-				SELECT 'Small Business' AS small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_smallBus
-				UNION ALL
-				SELECT '8A' AS small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_8a
-			</cfquery>
-			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
-				SELECT small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_For_MultiSeriesLineChart
-				UNION ALL
-				SELECT 'Woman Owned' AS small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_womanOwned
-			</cfquery>
-			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
-				SELECT small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_For_MultiSeriesLineChart
-				UNION ALL
-				SELECT 'Small Disadvantaged' AS small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_smallDisadv
-			</cfquery>
-			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
-				SELECT small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_For_MultiSeriesLineChart
-				UNION ALL
-				SELECT 'Disabled Veteran Owned' AS small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_disabledVetOwned
-			</cfquery>
-			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
-				SELECT small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_For_MultiSeriesLineChart
-				UNION ALL
-				SELECT 'HUBZone' AS small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_HUBZone
-			</cfquery> --->
+			<cfset request.stcData.stcDonutData = structNew()/>
+			<cfset variables.stcDonutData = this.groupChartDataBySmallBusinessCategory(qryData = request.stcData.objData)/>
+			<cfloop list="#structKeyList(variables.stcDonutData)#" index="variables.i">
+				<cfset request.stcData.stcDonutData[variables.i] = variables.stcDonutData[variables.i]/>
+			</cfloop>
+			<cfset structDelete(variables, "stcData.stcDonutData")/>
+
 			<!--- ----------------------------------------------------------------------------------------------- --->
+			<cfset request.stcData.stcMultiSeriesData = structNew()/>
+			<cfset variables.stcMultiSeriesData = this.separateChartDataBySmallBusinessCategory(qryData = request.stcData.objData)/>
+			<cfloop list="#structKeyList(variables.stcMultiSeriesData)#" index="variables.i">
+				<cfset request.stcData.stcMultiSeriesData[variables.i] = variables.stcMultiSeriesData[variables.i]/>
+			</cfloop>
+			<cfset structDelete(variables, "stcData.stcMultiSeriesData")/>
+
 		</cfif>
 		<!--- <cfset request.qryBranches = this.getBranches()/> --->
 		<cfset request.qryAgencyCodes = this.getAgencyCodes()/>
@@ -758,7 +721,6 @@
 				<cfset local.strGroupLabel = "Disabled Veteran Owned"/>
 				<cfset local.strGroupCriteria = "y,true"/>
 			<cfelseif local.i IS "HUBZone">
-				<cfset local.strGroupCriteria = "y,true"/>
 				<cfset local.strGroupField = "HUBZoneFlag"/>
 				<cfset local.strGroupLabel = "HUBZone"/>
 				<cfset local.strGroupCriteria = "y,true"/>
@@ -798,6 +760,50 @@
 				FROM local.qryDataIsNot
 			</cfquery>
 
+		</cfloop>
+
+		<cfreturn local.stcData/>
+
+	</cffunction>
+
+	<cffunction name="separateChartDataBySmallBusinessCategory" returnType="struct">
+		<cfargument name="qryData" type="query" required="true"/>
+
+		<cfset local.lstInitialFieldList = arguments.qryData.getColumnList()/>
+		<cfset local.stcData = structNew()/>
+
+		<cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
+			<cfset local.stcData["qry_#local.i#"] = queryNew("small_business_category_txt,obligatedamount")/>
+
+			<cfif local.i IS "smallBus">
+				<cfset local.strGroupField = "contractingofficerbusinesssizedetermination"/>
+				<cfset local.strGroupCriteria = "s: small business"/>
+			<cfelseif local.i IS "8a">
+				<cfset local.strGroupField = "firm8AFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "womanOwned">
+				<cfset local.strGroupField = "womenOwnedFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "smallDisAdv">
+				<cfset local.strGroupField = "SDBFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "disabledVetOwned">
+				<cfset local.strGroupField = "SRDVOBFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "HUBZone">
+				<cfset local.strGroupField = "HUBZoneFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			</cfif>
+
+			<cfquery name="local.stcData.qryData_#local.i#" dbtype="query">
+				SELECT [signedDate]
+					, SUM([obligatedAmount]) AS obligatedAmount
+					, 0 AS ytd_total_obligated_amount_nbr
+				FROM arguments.qryData
+				WHERE LOWER([#local.strGroupField#]) IN (<cfqueryparam value="#local.strGroupCriteria#" list="true" cfsqltype="cf_sql_varchar"/>)
+				GROUP BY [signedDate]
+				ORDER BY [signedDate]
+			</cfquery>
 		</cfloop>
 
 		<cfreturn local.stcData/>

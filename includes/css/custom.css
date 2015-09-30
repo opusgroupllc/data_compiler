@@ -28,8 +28,16 @@
 #donut_charts_container {
 	display: inline; 
 	float: left; 
+	clear: left; 
 	border: solid 1px #cccccc;
 	border-radius: 5px;  
+	margin: 5px; 
+}
+#charts_container {
+	display: inline; 
+	float: left; 
+	/*border: solid 1px #cccccc;
+	border-radius: 5px;  */
 	margin: 5px; 
 }
 .donut_chart {

@@ -129,7 +129,7 @@
 			<script>
 				/*-- Init the data: --*/
 				var chartData = #serializeD3JSON(
-					qryData = request.stcData["qryData#len(arguments.strSmallBusinessCategory) ? '_#arguments.strSmallBusinessCategory#' : ''#"]
+					qryData = request.stcData.stcDonutData["qryData#len(arguments.strSmallBusinessCategory) ? '_#arguments.strSmallBusinessCategory#' : ''#"]
 					, strLabelColumn = "#arguments.strLabelColumn#"
 					, strValueColumn = "#arguments.strValueColumn#"
 					, bolWrapValuesWithQuotes = #arguments.bolWrapValuesWithQuotes#
@@ -345,14 +345,6 @@
 					.attr("fill", "##36454f")
 					.text("#arguments.strValue2#");
 
-				/*-- svg.append("text")
-					.attr("dy", "1.5em")
-					.attr("dx", "6.5em")
-					.style("text-anchor", "end")
-					.attr("class", "inner-circle-text")
-					.attr("fill", "##36454f")
-					.text(""); --*/
-
 				/*-- When we mouse over an arc, populate the inner circle text with the item label. --*/
 				/*-- $(document).on(
 					"mouseover"
@@ -434,14 +426,28 @@
 		<cfoutput>
 			<svg id="#arguments.strChartId#"></svg>
 			<script>
-				var chartData = #serializeD3JSON(
+				<!--- objChartData["jsnData_#local.i#"] --->
+				var objChartData = {
+					<cfset local.iCount = 0/>
+					<cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
+						<cfset local.iCount++/>
+						#local.iCount GT 1 ? ", " : ""#jsnData_#local.i#: #serializeD3JSON(
+							qryData = request.stcData.stcMultiSeriesData["qryData_#local.i#"]
+							, strValueColumnX = arguments.strValueColumnX
+							, strValueColumnY = arguments.strValueColumnY
+							, bolWrapValuesWithQuotesX = arguments.bolWrapValuesWithQuotesX
+							, bolWrapValuesWithQuotesY = arguments.bolWrapValuesWithQuotesY
+						)#
+					</cfloop>
+				};
+				<!--- var chartData = #serializeD3JSON(
 					//qryData = request.stcData.objDataobjData_For_MultiSeriesLineChart
-					qryData = request.stcData[local.strQueryName]
+					qryData = request.stcData.stcMultiSeriesData[local.strQueryName]
 					, strValueColumnX = arguments.strValueColumnX
 					, strValueColumnY = arguments.strValueColumnY
 					, bolWrapValuesWithQuotesX = arguments.bolWrapValuesWithQuotesX
 					, bolWrapValuesWithQuotesY = arguments.bolWrapValuesWithQuotesY
-				)#;
+				)#; --->
 
 				/*-- Next, let's define some constants like width, height, left margin, etc., which we'll use while creating the graph. --*/
 				var vis = d3.select("##sb_multi_series_line_chart")
