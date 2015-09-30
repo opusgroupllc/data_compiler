@@ -43,6 +43,16 @@
 		<cfparam name="form.maj_agency_cat" default=""/>
 		<cfparam name="form.fiscal_year" default="2015"/>
 
+		<cfset request.stcBusinessCagoryColors = {
+			strSmallBus = "FF9900"
+			, str8a = "0040FF"
+			, strWomanOwned = "B20000"
+			, strSmallDisAdv = "008C00"
+			, strDisabledVetOwned = "FF9999"
+			, strHUBZone = "73B9FF"
+			, strAllOther = "000000"
+		}/>
+
 		<cfif val(form.data_form_submitted)>
 			<!--- <cfdump var="#form#"> --->
 
@@ -760,6 +770,12 @@
 				FROM arguments.qryData
 				WHERE LOWER([#local.strGroupField#]) IN (<cfqueryparam value="#local.strGroupCriteria#" list="true" cfsqltype="cf_sql_varchar"/>)
 			</cfquery>
+			<cfif NOT local.qryDataIs.recordCount>
+				<cfset local.qryDataIs = queryNew("small_business_category_txt,total_obligated_amount_nbr")/>
+				<cfset queryAddRow(local.qryDataIs)/>
+				<cfset querySetCell(local.qryDataIs, "small_business_category_txt", local.strGroupLabel)/>
+				<cfset querySetCell(local.qryDataIs, "total_obligated_amount_nbr", 0.00)/>
+			</cfif>
 
 			<cfquery name="local.qryDataIsNot" dbtype="query">
 				SELECT 'Not #local.strGroupLabel#' AS small_business_category_txt
@@ -767,6 +783,12 @@
 				FROM arguments.qryData
 				WHERE LOWER([#local.strGroupField#]) NOT IN (<cfqueryparam value="#local.strGroupCriteria#" list="true" cfsqltype="cf_sql_varchar"/>)
 			</cfquery>
+			<cfif NOT local.qryDataIsNot.recordCount>
+				<cfset local.qryDataIsNot = queryNew("small_business_category_txt,total_obligated_amount_nbr")/>
+				<cfset queryAddRow(local.qryDataIsNot)/>
+				<cfset querySetCell(local.qryDataIsNot, "small_business_category_txt", local.strGroupLabel)/>
+				<cfset querySetCell(local.qryDataIsNot, "total_obligated_amount_nbr", 0.00)/>
+			</cfif>
 
 			<cfquery name="local.stcData.qryData_#local.i#" dbtype="query">
 				SELECT [small_business_category_txt], [total_obligated_amount_nbr]

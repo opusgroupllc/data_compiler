@@ -105,6 +105,13 @@
 	<cfargument name="strSmallBusinessCategory" type="string" default=""/>
 	<cfargument name="strLabelColumn" type="string" required="true"/>
 	<cfargument name="strValueColumn" type="string" required="true"/>
+	<cfargument name="strLabel1" type="string" default=""/>
+	<cfargument name="strLabel2" type="string" default=""/>
+	<cfargument name="strLabel3" type="string" default=""/>
+	<cfargument name="strValueLabel1" type="string" default=""/>
+	<cfargument name="strValueLabel2" type="string" default=""/>
+	<cfargument name="strValue1" type="string" default=""/>
+	<cfargument name="strValue2" type="string" default=""/>
 	<cfargument name="bolWrapValuesWithQuotes" type="boolean" default="false"/>
 	<cfargument name="lstColorList" type="string" default=""/>
 	<cfargument name="intChartWidth" type="numeric" default="450"/>
@@ -246,60 +253,135 @@
 					.attr("r", 100)
 					.attr("fill", "##ffffff");  // If you want to change the colour of the inner circle, change it here.
 
+				/*-- Insert horizontal dividing line(s) in the circle just above the 1st value and just below the 2nd value. --*/
 				svg.append("line")
-					.attr("x1", -75)
-					.attr("x2", 75)
-					.attr("y1", 15)
-					.attr("y2", 15)
-					.style("stroke", "##36454f")
+					.attr("x1", -93)
+					.attr("x2", 93)
+					.attr("y1", -24)
+					.attr("y2", -24)
+					.style("stroke", "##999999")
 					.style("stroke-width", 1);
 
+				svg.append("line")
+					.attr("x1", -93)
+					.attr("x2", 93)
+					.attr("y1", 13)
+					.attr("y2", 13)
+					.style("stroke", "##999999")
+					.style("stroke-width", 1);
+
+				/*-- Insert horizontal dividing line in the circle between the two values. --*/
+				/*-- svg.append("line")
+					.attr("x1", -93)
+					.attr("x2", 93)
+					.attr("y1", -5)
+					.attr("y2", -5)
+					.style("stroke", "##999999")
+					.style("stroke-width", 1); --*/
+
 				/*-- Next we'll insert text and attach a class that we'll use in our CSS to style. --*/
-
+				/*-- First label line text box: --*/
 				svg.append("text")
-					.attr("dy", "-1.0em")
+					.attr("dy", "-4.75em")
 					.style("text-anchor", "middle")
+					.style("font-weight", "bold")
 					.attr("class", "inner-circle-text")
 					.attr("fill", "##36454f")
-					.text("");
+					.text("#arguments.strLabel1#");
 
+				/*-- Second label line text box: --*/
 				svg.append("text")
-					.attr("dy", "0.0em")
+					.attr("dy", "-3.75em")
 					.style("text-anchor", "middle")
+					.style("font-weight", "bold")
 					.attr("class", "inner-circle-text")
 					.attr("fill", "##36454f")
-					.text("");
+					.text("#arguments.strLabel2#");
 
+				/*-- Third label line text box: --*/
 				svg.append("text")
-					.attr("dy", "3.0em")
+					.attr("dy", "-2.75em")
 					.style("text-anchor", "middle")
+					.style("font-weight", "bold")
 					.attr("class", "inner-circle-text")
 					.attr("fill", "##36454f")
-					.text("");
+					.text("#arguments.strLabel3#");
+
+				/*-- First value's label text box: --*/
+				svg.append("text")
+					.attr("dy", "-0.6em")
+					.attr("dx", "-6.5em")
+					.style("text-anchor", "start")
+					.style("font-weight", "bold")
+					.attr("class", "inner-circle-text")
+					.attr("fill", "###listFirst(arguments.lstColorList)#")
+					.text("#arguments.strValueLabel1#");
+
+				/*-- First value text box: --*/
+				svg.append("text")
+					.attr("dy", "-0.6em")
+					.attr("dx", "6.5em")
+					.style("text-anchor", "end")
+					.attr("class", "inner-circle-text")
+					.attr("fill", "##36454f")
+					.text("#arguments.strValue1#");
+
+				/*-- Second value's label text box: --*/
+				svg.append("text")
+					.attr("dy", "0.6em")
+					.attr("dx", "-6.5em")
+					.style("text-anchor", "start")
+					.style("font-weight", "bold")
+					.attr("class", "inner-circle-text")
+					.attr("fill", "###listLast(arguments.lstColorList)#")
+					.text("#arguments.strValueLabel2#");
+
+				/*-- Second value text box: --*/
+				svg.append("text")
+					.attr("dy", "0.6em")
+					.attr("dx", "6.5em")
+					.style("text-anchor", "end")
+					.attr("class", "inner-circle-text")
+					.attr("fill", "##36454f")
+					.text("#arguments.strValue2#");
+
+				/*-- svg.append("text")
+					.attr("dy", "1.5em")
+					.attr("dx", "6.5em")
+					.style("text-anchor", "end")
+					.attr("class", "inner-circle-text")
+					.attr("fill", "##36454f")
+					.text(""); --*/
 
 				/*-- When we mouse over an arc, populate the inner circle text with the item label. --*/
-				$(document).on(
+				/*-- $(document).on(
 					"mouseover"
 					, "###arguments.strChartId# .arc"
-					, function() {
+					, function() { --*/
 						/*-- Rollover and reset of arc props: --*/
-						$("###arguments.strChartId# .arc").css("stroke-width", "0");
+						//$("###arguments.strChartId# .arc").css("stroke-width", "0");
 						//$(".arc").css("opacity", "1");
-						$(this).css("stroke-width", "10");
+						//$(this).css("stroke-width", "10");
 						//$(this).css("opacity", "0.5");
 
-						var strItemLabel_1 = $(this).children("text:first").html();
+						/*-- var strItemLabel_1 = $(this).children("text:first").html();
 						var strItemLabel_2 = "";
 						var strItemLabel_3 = $(this).children("text:last").html();
+						var strItemLabel_4 = $(this).children("text:last").html();
+						var strItemLabel_5 = $(this).children("text:last").html(); --*/
 
 						/*-- Note: Had to use pure JS to select the text element, or getBBox() doesn't work. --*/
-						var objTextElement_1 = document.getElementById("#arguments.strChartId#").getElementsByClassName("inner-circle-text")[0];
+						/*-- var objTextElement_1 = document.getElementById("#arguments.strChartId#").getElementsByClassName("inner-circle-text")[0];
 						var objTextElement_2 = document.getElementById("#arguments.strChartId#").getElementsByClassName("inner-circle-text")[1];
 						var objTextElement_3 = document.getElementById("#arguments.strChartId#").getElementsByClassName("inner-circle-text")[2];
+						var objTextElement_4 = document.getElementById("#arguments.strChartId#").getElementsByClassName("inner-circle-text")[3];
+						var objTextElement_5 = document.getElementById("#arguments.strChartId#").getElementsByClassName("inner-circle-text")[4]; --*/
 
-						objTextElement_1.innerHTML = strItemLabel_1;
+						/*-- objTextElement_1.innerHTML = strItemLabel_1;
 						objTextElement_3.innerHTML = strItemLabel_3;
-						if (objTextElement_1.getBBox().width > 175) {
+						objTextElement_4.innerHTML = strItemLabel_4;
+						objTextElement_5.innerHTML = strItemLabel_5; --*/
+						/*-- if (objTextElement_1.getBBox().width > 175) {
 							var intTotalLength = strItemLabel_1.length;
 							var intTotalLengthHalf = Math.floor(intTotalLength / 2);
 							var aryItemLabel_1 = strItemLabel_1.split(" ");
@@ -309,7 +391,7 @@
 							var intClosestMoreThanHalf = new Number();
 							objTextElement_1.innerHTML = "";
 							for (i = 0; i < aryItemLabel_1.length; i++) {
-								/*-- To account for the space: --*/
+								//-- To account for the space: --
 								intReassembledLength += aryItemLabel_1[i].length + (i < aryItemLabel_1.length ? 1 : 0);
 								if (intReassembledLength <= intTotalLengthHalf) {
 									intClosestLessThanHalf = i;
@@ -324,9 +406,9 @@
 							strItemLabel_2 = aryItemLabel_2.join(" ");
 							objTextElement_1.innerHTML = strItemLabel_1;
 							objTextElement_2.innerHTML = strItemLabel_2;
-						}
-					}
-				);
+						} --*/
+					/*-- }
+				); --*/
 			</script>
 		</cfoutput>
 	</cfsavecontent>

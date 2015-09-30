@@ -34,31 +34,33 @@
 				<cfset variables.stcDonutArguments = {
 					strChartId = "sb_donut_#variables.i#"
 					, strSmallBusinessCategory = variables.i
+					, lstColorList = "#request.stcBusinessCagoryColors['str#variables.i#']#,#request.stcBusinessCagoryColors.strAllOther#"
 					, strLabelColumn = "small_business_category_txt"
 					, strValueColumn = "total_obligated_amount_nbr"
+					, strValueLabel1 = "Yes:"
+					, strValueLabel2 = "No:"
+					, strValue1 = request.stcData["qryData_#variables.i#"]["total_obligated_amount_nbr"][1]
+					, strValue2 = request.stcData["qryData_#variables.i#"]["total_obligated_amount_nbr"][2]
 					, intChartWidth = variables.stcDonutSettings.intChartWidth
 					, intChartHeight = variables.stcDonutSettings.intChartHeight
 					, strInnerRadius = variables.stcDonutSettings.strInnerRadius
 					, strOuterRadius = variables.stcDonutSettings.strOuterRadius
 				}/>
 				<cfif variables.i IS "smallBus">
-					<cfset variables.stcDonutArguments.lstColorList = "FF9900,000000"/>
-					<cfset variables.stcDonutArguments.strDonutLabel = "Small Business"/>
+					<cfset variables.stcDonutArguments.strLabel2 = "Small Business"/>
 				<cfelseif variables.i IS "8a">
-					<cfset variables.stcDonutArguments.lstColorList = "0040FF,000000"/>
-					<cfset variables.stcDonutArguments.strDonutLabel = "8A"/>
+					<cfset variables.stcDonutArguments.strLabel2 = "8A"/>
 				<cfelseif variables.i IS "womanOwned">
-					<cfset variables.stcDonutArguments.lstColorList = "B20000,000000"/>
-					<cfset variables.stcDonutArguments.strDonutLabel = "Woman Owned"/>
+					<cfset variables.stcDonutArguments.strLabel2 = "Woman-Owned"/>
 				<cfelseif variables.i IS "smallDisAdv">
-					<cfset variables.stcDonutArguments.lstColorList = "008C00,000000"/>
-					<cfset variables.stcDonutArguments.strDonutLabel = "Small Disadvantaged Business"/>
+					<cfset variables.stcDonutArguments.strLabel1 = "Small"/>
+					<cfset variables.stcDonutArguments.strLabel2 = "Disadvantaged"/>
+					<cfset variables.stcDonutArguments.strLabel3 = "Business"/>
 				<cfelseif variables.i IS "disabledVetOwned">
-					<cfset variables.stcDonutArguments.lstColorList = "FF9999,000000"/>
-					<cfset variables.stcDonutArguments.strDonutLabel = "Disabled Veteran Owned"/>
+					<cfset variables.stcDonutArguments.strLabel1 = "Disabled"/>
+					<cfset variables.stcDonutArguments.strLabel2 = "Veteran-Owned"/>
 				<cfelseif variables.i IS "HUBZone">
-					<cfset variables.stcDonutArguments.lstColorList = "73B9FF,000000"/>
-					<cfset variables.stcDonutArguments.strDonutLabel = "HUBZone"/>
+					<cfset variables.stcDonutArguments.strLabel2 = "HUBZone"/>
 				</cfif>
 				<div class="donut_chart" style="#listFind('1,4', variables.iCount) ? 'clear: left; ' : ''#">
 					#renderD3DonutChart(argumentCollection = variables.stcDonutArguments)#
