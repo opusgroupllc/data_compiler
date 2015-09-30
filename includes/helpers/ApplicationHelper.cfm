@@ -78,7 +78,7 @@
 				[
 					<cfloop query="arguments.qryData">
 						#arguments.qryData.currentRow GT 1 ? ", " : ""#{
-							"label": "#evaluate("arguments.qryData.#arguments.strLabelColumn#")#"
+							"label": "#evaluate("arguments.qryData.#arguments.strLabelColumn#")#" <!--- //#arguments.strLabelColumn# --->
 							, "value": #local.strQuotes##evaluate("arguments.qryData.#arguments.strValueColumn#")##local.strQuotes#
 							, "link": "#arguments.strLink#"
 						}
@@ -106,11 +106,15 @@
 	<cfargument name="strLabelColumn" type="string" required="true"/>
 	<cfargument name="strValueColumn" type="string" required="true"/>
 	<cfargument name="bolWrapValuesWithQuotes" type="boolean" default="false"/>
+	<cfargument name="lstColorList" type="string" default=""/>
 	<cfargument name="intChartWidth" type="numeric" default="450"/>
 	<cfargument name="intChartHeight" type="numeric" default="450"/>
 	<cfargument name="strInnerRadius" type="string" default="150"/>
 	<cfargument name="strOuterRadius" type="string" default="105"/>
 
+	<cfif reFind("[^,a-fA-F0-9]", arguments.lstColorList)>
+		<cfthrow message="Only valid hexidecimal color values are allowed. Do not include the pound (##) sign."/>
+	</cfif>
 
 	<cfsavecontent variable="local.strContent">
 		<cfoutput>
@@ -118,7 +122,7 @@
 			<script>
 				/*-- Init the data: --*/
 				var chartData = #serializeD3JSON(
-					qryData = request.stcData["objData#len(arguments.strSmallBusinessCategory) ? '_#arguments.strSmallBusinessCategory#' : ''#"]
+					qryData = request.stcData["qryData#len(arguments.strSmallBusinessCategory) ? '_#arguments.strSmallBusinessCategory#' : ''#"]
 					, strLabelColumn = "#arguments.strLabelColumn#"
 					, strValueColumn = "#arguments.strValueColumn#"
 					, bolWrapValuesWithQuotes = #arguments.bolWrapValuesWithQuotes#
@@ -129,11 +133,23 @@
 					, height = #arguments.intChartHeight#
 					, radius = Math.min(width, height) / 2;
 
-				/*-- Next, we'll use D3's default colours. --*/
-				var colour = d3.scale.category20();
-				/*-- If you want to define your own colours, use this instead: --*/
-				//var colour = d3.scale.ordinal().range([*insert hex values here*]);
-				var stroke = d3.scale.category20();
+				/*-- Next, we'll determine the colors to be used for the donut arcs: --*/
+				<cfif len(trim(arguments.lstColorList))>
+					/*-- If defining our own colors, use this: --*/
+					var aryDonutColors = [
+						<cfset local.iCount = 0/>
+						<cfloop list="#arguments.lstColorList#" index="local.i">
+							<cfset local.iCount++/>
+							#local.iCount GT 1 ? ", " : ""#"###local.i#"
+						</cfloop>
+					];
+					var colour = d3.scale.ordinal().range(aryDonutColors);
+					var stroke = d3.scale.ordinal().range(aryDonutColors);
+				<cfelse>
+					/*-- Use D3's default colours. --*/
+					var colour = d3.scale.category20();
+					var stroke = d3.scale.category20();
+				</cfif>
 				/*-- Now it's time to define the size of our arcs. The outer radius determines
 					the overall chart size from the center to the outer edge while the inner radius
 					will define the size of the inner circle. --*/
@@ -408,4 +424,9 @@
 	</cfsavecontent>
 
 	<cfreturn local.strContent/>
+</cffunction>
+
+<cffunction name="minQueryValue" returnType="any">
+	<cfargument name="qryData" type="query" required="true"/>
+	<cfargument name="qryData" type="query" required="true"/>
 </cffunction>

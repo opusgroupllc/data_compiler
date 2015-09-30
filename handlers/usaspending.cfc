@@ -54,7 +54,7 @@
 			</cfloop>
 
 			<cfset request.stcData = structNew()/>
-			<cfloop list="none,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
+			<!--- <cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
 				<cfset request.stcData["objData_#local.i#"] = this.parseXMLResponse(
 					strDetailLevel = form.detail
 					, strXMLData = this.getXMLResponse(
@@ -62,19 +62,24 @@
 					).fileContent
 					, strSmallBusinessCategory = local.i
 				)>
-			</cfloop>
-			<cfset request.stcData["objData"] = this.parseXMLResponse(
+			</cfloop> --->
+			<cfset request.stcData.objData = this.parseXMLResponse(
 				strDetailLevel = form.detail
 				, strXMLData = this.getXMLResponse(
 					stcURLParams = local.stcURLParams
 				).fileContent
 			)>
+			<cfset variables.stcData = this.groupChartDataBySmallBusinessCategory(qryData = request.stcData.objData)/>
+			<cfloop list="#structKeyList(variables.stcData)#" index="variables.i">
+				<cfset request.stcData[variables.i] = variables.stcData[variables.i]/>
+			</cfloop>
+			<cfset structDelete(variables, "stcData")/>
 
 			<!--- ----------------------------------------------------------------------------------------------- --->
-			<cfset local.lstFieldNames = request.stcData.objData.getColumnList()/>
+<!--- 			<cfset local.lstFieldNames = request.stcData.objData.getColumnList()/>
 			<cfquery name="request.stcData.objData_For_MultiSeriesLineChart" dbtype="query">
-				SELECT 'None' AS small_business_category_txt, #local.lstFieldNames#
-				FROM request.stcData.objData_none
+				SELECT 'Small Business' AS small_business_category_txt, #local.lstFieldNames#
+				FROM request.stcData.objData_smallBus
 				UNION ALL
 				SELECT '8A' AS small_business_category_txt, #local.lstFieldNames#
 				FROM request.stcData.objData_8a
@@ -106,7 +111,7 @@
 				UNION ALL
 				SELECT 'HUBZone' AS small_business_category_txt, #local.lstFieldNames#
 				FROM request.stcData.objData_HUBZone
-			</cfquery>
+			</cfquery> --->
 			<!--- ----------------------------------------------------------------------------------------------- --->
 		</cfif>
 		<!--- <cfset request.qryBranches = this.getBranches()/> --->
@@ -414,7 +419,7 @@
 		<cfargument name="xmlXMLData" type="xml" required="true"/>
 		<cfargument name="strSmallBusinessCategory" type="string" default=""/>
 
-		<cfset local.lstSmallBusinessCategories = "none,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone"/>
+		<cfset local.lstSmallBusinessCategories = "none,smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone"/>
 		<cfif len(arguments.strSmallBusinessCategory)
 			AND NOT listFindNoCase(local.lstSmallBusinessCategories, arguments.strSmallBusinessCategory)
 		>
@@ -651,6 +656,9 @@
 						AND womenOwnedFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
 						AND SDBFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
 					</cfcase>
+					<cfcase value="smallBus">
+						WHERE contractingofficerbusinesssizedetermination = <cfqueryparam value="S: SMALL BUSINESS" cfsqltype="cf_sql_varchar"/>
+					</cfcase>
 					<cfcase value="disabledVetOwned">
 						WHERE SRDVOBFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
 					</cfcase>
@@ -708,6 +716,70 @@
 			ORDER BY "branch_name_txt", "agency_name_txt"
 		</cfquery>
 		<cfreturn local.qryData/>
+	</cffunction>
+
+	<cffunction name="groupChartDataBySmallBusinessCategory" returnType="struct">
+		<cfargument name="qryData" type="query" required="true"/>
+
+		<cfset local.lstInitialFieldList = arguments.qryData.getColumnList()/>
+		<cfset local.stcData = structNew()/>
+
+		<cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
+			<cfset local.stcData["qry_#local.i#"] = queryNew("small_business_category_txt,obligatedamount")/>
+
+			<cfif local.i IS "smallBus">
+				<cfset local.strGroupField = "contractingofficerbusinesssizedetermination"/>
+				<cfset local.strGroupLabel = "Small Business"/>
+				<cfset local.strGroupCriteria = "s: small business"/>
+			<cfelseif local.i IS "8a">
+				<cfset local.strGroupField = "firm8AFlag"/>
+				<cfset local.strGroupLabel = "8A"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "womanOwned">
+				<cfset local.strGroupField = "womenOwnedFlag"/>
+				<cfset local.strGroupLabel = "Woman Owned"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "smallDisAdv">
+				<cfset local.strGroupField = "SDBFlag"/>
+				<cfset local.strGroupLabel = "Small Disadvantaged Business"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "disabledVetOwned">
+				<cfset local.strGroupField = "SRDVOBFlag"/>
+				<cfset local.strGroupLabel = "Disabled Veteran Owned"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "HUBZone">
+				<cfset local.strGroupCriteria = "y,true"/>
+				<cfset local.strGroupField = "HUBZoneFlag"/>
+				<cfset local.strGroupLabel = "HUBZone"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			</cfif>
+
+			<cfquery name="local.qryDataIs" dbtype="query">
+				SELECT '#local.strGroupLabel#' AS small_business_category_txt
+					, SUM([obligatedamount]) AS total_obligated_amount_nbr
+				FROM arguments.qryData
+				WHERE LOWER([#local.strGroupField#]) IN (<cfqueryparam value="#local.strGroupCriteria#" list="true" cfsqltype="cf_sql_varchar"/>)
+			</cfquery>
+
+			<cfquery name="local.qryDataIsNot" dbtype="query">
+				SELECT 'Not #local.strGroupLabel#' AS small_business_category_txt
+					, SUM([obligatedamount]) AS total_obligated_amount_nbr
+				FROM arguments.qryData
+				WHERE LOWER([#local.strGroupField#]) NOT IN (<cfqueryparam value="#local.strGroupCriteria#" list="true" cfsqltype="cf_sql_varchar"/>)
+			</cfquery>
+
+			<cfquery name="local.stcData.qryData_#local.i#" dbtype="query">
+				SELECT [small_business_category_txt], [total_obligated_amount_nbr]
+				FROM local.qryDataIs
+				UNION ALL
+				SELECT [small_business_category_txt], [total_obligated_amount_nbr]
+				FROM local.qryDataIsNot
+			</cfquery>
+
+		</cfloop>
+
+		<cfreturn local.stcData/>
+
 	</cffunction>
 
 </cfcomponent>
