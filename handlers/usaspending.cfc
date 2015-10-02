@@ -84,7 +84,7 @@
 			<cfloop list="#structKeyList(variables.stcMultiSeriesData)#" index="variables.i">
 				<cfset request.stcData.stcMultiSeriesData[variables.i] = variables.stcMultiSeriesData[variables.i]/>
 			</cfloop>
-			<cfset structDelete(variables, "stcData.stcMultiSeriesData")/>
+			<cfset structDelete(variables, "stcData")/>
 
 		</cfif>
 		<!--- <cfset request.qryBranches = this.getBranches()/> --->
@@ -698,8 +698,6 @@
 		<cfset local.stcData = structNew()/>
 
 		<cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
-			<cfset local.stcData["qry_#local.i#"] = queryNew("small_business_category_txt,obligatedamount")/>
-
 			<cfif local.i IS "smallBus">
 				<cfset local.strGroupField = "contractingofficerbusinesssizedetermination"/>
 				<cfset local.strGroupLabel = "Small Business"/>
@@ -773,8 +771,6 @@
 		<cfset local.stcData = structNew()/>
 
 		<cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
-			<cfset local.stcData["qry_#local.i#"] = queryNew("small_business_category_txt,obligatedamount")/>
-
 			<cfif local.i IS "smallBus">
 				<cfset local.strGroupField = "contractingofficerbusinesssizedetermination"/>
 				<cfset local.strGroupCriteria = "s: small business"/>
@@ -804,6 +800,72 @@
 				GROUP BY [signedDate]
 				ORDER BY [signedDate]
 			</cfquery>
+
+			<cfset local.amtTotal = 0/>
+			<cfloop query="local.stcData.qryData_#local.i#">
+				<cfset local.amtTotal += val(evaluate("local.stcData.qryData_#local.i#.obligatedAmount"))/>
+				<cfset querySetCell(
+					local.stcData["qryData_#local.i#"]
+					, "ytd_total_obligated_amount_nbr"
+					, local.amtTotal
+					, evaluate("local.stcData.qryData_#local.i#.currentRow")
+				)/>
+			</cfloop>
+
+		</cfloop>
+
+		<cfreturn local.stcData/>
+
+	</cffunction>
+
+	<cffunction name="separateChartDataBySmallBusinessCategory2" returnType="struct">
+		<cfargument name="qryData" type="query" required="true"/>
+
+		<cfset local.lstInitialFieldList = arguments.qryData.getColumnList()/>
+		<cfset local.stcData = structNew()/>
+
+		<cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
+			<cfif local.i IS "smallBus">
+				<cfset local.strGroupField = "contractingofficerbusinesssizedetermination"/>
+				<cfset local.strGroupCriteria = "s: small business"/>
+			<cfelseif local.i IS "8a">
+				<cfset local.strGroupField = "firm8AFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "womanOwned">
+				<cfset local.strGroupField = "womenOwnedFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "smallDisAdv">
+				<cfset local.strGroupField = "SDBFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "disabledVetOwned">
+				<cfset local.strGroupField = "SRDVOBFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			<cfelseif local.i IS "HUBZone">
+				<cfset local.strGroupField = "HUBZoneFlag"/>
+				<cfset local.strGroupCriteria = "y,true"/>
+			</cfif>
+
+			<cfquery name="local.stcData.qryData_#local.i#" dbtype="query">
+				SELECT [signedDate]
+					, SUM([obligatedAmount]) AS obligatedAmount
+					, 0 AS ytd_total_obligated_amount_nbr
+				FROM arguments.qryData
+				WHERE LOWER([#local.strGroupField#]) IN (<cfqueryparam value="#local.strGroupCriteria#" list="true" cfsqltype="cf_sql_varchar"/>)
+				GROUP BY [signedDate]
+				ORDER BY [signedDate]
+			</cfquery>
+
+			<cfset local.amtTotal = 0/>
+			<cfloop query="local.stcData.qryData_#local.i#">
+				<cfset local.amtTotal += val(evaluate("local.stcData.qryData_#local.i#.obligatedAmount"))/>
+				<cfset querySetCell(
+					local.stcData["qryData_#local.i#"]
+					, "ytd_total_obligated_amount_nbr"
+					, local.amtTotal
+					, evaluate("local.stcData.qryData_#local.i#.currentRow")
+				)/>
+			</cfloop>
+
 		</cfloop>
 
 		<cfreturn local.stcData/>

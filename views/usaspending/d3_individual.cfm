@@ -18,13 +18,20 @@
 
 		<div id="charts_container">
 			<div class="multi_series_line_chart">
-				#renderD3MultiSeriesLineChart(
+				#renderD3MultiSeriesLineChart2(
 					strChartId = "sb_multi_series_line_chart"
 					, strValueColumnX = "signeddate"
-					, strValueColumnY = "obligatedamount"
+					, strValueColumnY = "ytd_total_obligated_amount_nbr"
+					, strValueColumnTypeX = "date"
+					, strValueColumnDataTypeX = "date"
+					, strValueColumnDataTypeY = "decimal"
 					, bolWrapValuesWithQuotesX = true
-					, intChartWidth = 1000
-					, intChartHeight = 500
+					, intChartWidth = 800
+					, intChartHeight = 300
+					, intTopMargin = 40
+					, intRightMargin = 40
+					, intBottomMargin = 40
+					, intLeftMargin = 100
 				)#
 			</div>
 			<div id="donut_charts_container">
@@ -77,4 +84,4 @@
 	</cfif>
 
 </cfoutput>
-<!--- <cfdump var="#request.stcData.stcDonutData#" metaInfo="true"/> --->
+<!--- <cfdump var="#request.stcData#" metaInfo="true"/> --->

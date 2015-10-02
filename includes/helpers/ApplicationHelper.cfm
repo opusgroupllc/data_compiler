@@ -51,6 +51,8 @@
 	<cfargument name="strValueColumn" type="string" default=""/>
 	<cfargument name="strValueColumnX" type="string" default=""/>
 	<cfargument name="strValueColumnY" type="string" default=""/>
+	<cfargument name="strValueColumnDataTypeX" type="string" default=""/>
+	<cfargument name="strValueColumnDataTypeY" type="string" default=""/>
 	<cfargument name="bolWrapValuesWithQuotes" type="boolean" default="true"/>
 	<cfargument name="bolWrapValuesWithQuotesX" type="boolean" default="true"/>
 	<cfargument name="bolWrapValuesWithQuotesY" type="boolean" default="true"/>
@@ -88,8 +90,16 @@
 				[
 					<cfloop query="arguments.qryData">
 						#arguments.qryData.currentRow GT 1 ? ", " : ""#{
-							"#arguments.strValueColumnX#": #local.strQuotesX##evaluate("arguments.qryData.#arguments.strValueColumnX#")##local.strQuotesX#
-							, "#arguments.strValueColumnY#": #local.strQuotesY##evaluate("arguments.qryData.#arguments.strValueColumnY#")##local.strQuotesY#
+							<cfif arguments.strValueColumnDataTypeX IS "date">
+								"#arguments.strValueColumnX#": new Date(#local.strQuotesX##dateFormat(evaluate("arguments.qryData.#arguments.strValueColumnX#"), "mm/dd/yyyy")##local.strQuotesX#)
+							<cfelse>
+								"#arguments.strValueColumnX#": #local.strQuotesX##evaluate("arguments.qryData.#arguments.strValueColumnX#")##local.strQuotesX#
+							</cfif>
+							<cfif arguments.strValueColumnDataTypeY IS "date">
+								, "#arguments.strValueColumnY#": new Date(#local.strQuotesY##dateFormat(evaluate("arguments.qryData.#arguments.strValueColumnY#"), "mm/dd/yyyy")##local.strQuotesY#)
+							<cfelse>
+								, "#arguments.strValueColumnY#": #local.strQuotesY##evaluate("arguments.qryData.#arguments.strValueColumnY#")##local.strQuotesY#
+							</cfif>
 						}
 					</cfloop>
 				]
@@ -408,6 +418,104 @@
 </cffunction>
 
 
+<cffunction name="renderD3MultiSeriesLineChart2" returnType="string">
+	<cfargument name="strChartId" type="string" required="true"/>
+	<cfargument name="strSmallBusinessCategory" type="string" default=""/>
+	<cfargument name="strValueColumnX" type="string" required="true"/>
+	<cfargument name="strValueColumnY" type="string" required="true"/>
+	<cfargument name="bolWrapValuesWithQuotesX" type="boolean" default="false"/>
+	<cfargument name="bolWrapValuesWithQuotesY" type="boolean" default="false"/>
+	<cfargument name="intChartWidth" type="numeric" default="900"/>
+	<cfargument name="intChartHeight" type="numeric" default="500"/>
+	<cfargument name="intTopMargin" type="numeric" default="0"/>
+	<cfargument name="intRightMargin" type="numeric" default="0"/>
+	<cfargument name="intBottomMargin" type="numeric" default="0"/>
+	<cfargument name="intLeftMargin" type="numeric" default="0"/>
+	<!--- <cfdump var="#request.stcData.stcMultiSeriesData#"> --->
+	<cfset local.qryMultiSeriesYTDData = getMultiSeriesYTDData()/>
+	<cfsavecontent variable="local.strContent">
+		<cfoutput>
+			<div id="#arguments.strChartId#" style="width: #arguments.intChartWidth#px; height: #arguments.intChartHeight#px; "></div>
+			<script>
+				var objData = {
+					aryDateLabels: ["As of Last Day Of"]
+					, aryAll: ["All"]
+					, arySmallBus: ["Small Business"]
+					, ary8a: ["8A"]
+					, aryWomanOwned: ["Woman-Owned"]
+					, arySmallDisadv: ["Small Disadvantaged"]
+					, aryDisabledVetOwned: ["Disabled Veteran-Owned"]
+					, aryHUBZone: ["HUBZone"]
+				}
+				<cfloop query="local.qryMultiSeriesYTDData">
+					<!--- YTDDate,SmallBus,8a,WomanOwned,SmallDisadv,DisabledVetOwned,HUBZone,All --->
+					objData["aryDateLabels"].push(new Date("#dateFormat(local.qryMultiSeriesYTDData.YTDDate, 'mm/dd/yyyy')#"));
+					objData["aryAll"].push("#local.qryMultiSeriesYTDData.All#");
+					objData["arySmallBus"].push("#local.qryMultiSeriesYTDData.SmallBus#");
+					objData["ary8a"].push("#local.qryMultiSeriesYTDData.8a#");
+					objData["aryWomanOwned"].push("#local.qryMultiSeriesYTDData.WomanOwned#");
+					objData["arySmallDisadv"].push("#local.qryMultiSeriesYTDData.SmallDisadv#");
+					objData["aryDisabledVetOwned"].push("#local.qryMultiSeriesYTDData.DisabledVetOwned#");
+					objData["aryHUBZone"].push("#local.qryMultiSeriesYTDData.HUBZone#");
+				</cfloop>
+
+				var chart = c3.generate({
+					bindto: '###arguments.strChartId#'
+				    , data: {
+				        x: objData["aryDateLabels"][0]
+				//        xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
+				        , columns: [
+				           <!---  ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+				            ['Red Sox', 30, 200, 100, 400, 150, 250],
+				            ['Yankees', 130, 340, 200, 500, 250, 350] --->
+							objData["aryDateLabels"]
+							, objData["aryAll"]
+							, objData["arySmallBus"]
+							, objData["ary8a"]
+							, objData["aryWomanOwned"]
+							, objData["arySmallDisadv"]
+							, objData["aryDisabledVetOwned"]
+							, objData["aryHUBZone"]
+				        ]
+				    }
+			        , color: {
+			        	pattern: [
+							"###request.stcBusinessCagoryColors.strAllOther#"
+							, "###request.stcBusinessCagoryColors.strSmallBus#"
+							, "###request.stcBusinessCagoryColors.str8a#"
+							, "###request.stcBusinessCagoryColors.strWomanOwned#"
+							, "###request.stcBusinessCagoryColors.strSmallDisAdv#"
+							, "###request.stcBusinessCagoryColors.strDisabledVetOwned#"
+							, "###request.stcBusinessCagoryColors.strHUBZone#"
+			        	]
+			        }
+				    , axis: {
+				        x: {
+				            type: 'timeseries'
+				            , tick: {
+				                format: '%Y-%m'  //-%d
+				            }
+				        }
+				    }
+				});
+
+				<!--- setTimeout(function () {
+				    chart.load({
+				        columns: [
+				            ['data3', 400, 500, 450, 700, 600, 500]
+				        ]
+				    });
+				}, 1000); --->
+				<cfloop list="SmallBus,8a,WomanOwned,SmallDisadv,DisabledVetOwned,HUBZone" index="local.i">
+
+				</cfloop>
+			</script>
+		</cfoutput>
+	</cfsavecontent>
+
+	<cfreturn local.strContent/>
+</cffunction>
+
 <cffunction name="renderD3MultiSeriesLineChart" returnType="string">
 	<cfargument name="strChartId" type="string" required="true"/>
 	<cfargument name="strSmallBusinessCategory" type="string" default=""/>
@@ -417,24 +525,85 @@
 	<cfargument name="bolWrapValuesWithQuotesY" type="boolean" default="false"/>
 	<cfargument name="intChartWidth" type="numeric" default="900"/>
 	<cfargument name="intChartHeight" type="numeric" default="500"/>
+	<cfargument name="intTopMargin" type="numeric" default="0"/>
+	<cfargument name="intRightMargin" type="numeric" default="0"/>
+	<cfargument name="intBottomMargin" type="numeric" default="0"/>
+	<cfargument name="intLeftMargin" type="numeric" default="0"/>
 
 	<cfset local.strQuotesX = arguments.bolWrapValuesWithQuotesX ? """" : ""/>
 	<cfset local.strQuotesY = arguments.bolWrapValuesWithQuotesY ? """" : ""/>
 
 	<cfset local.strQueryName = "objData#len(arguments.strSmallBusinessCategory) ? '_#arguments.strSmallBusinessCategory#' : ''#"/>
+
+	<!--- allOther,smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone --->
+	<!--- Ex:
+		local.stcMinMaxValues.stcAllOther.stcMinMaxColumnValuesX.minColumnData
+		local.stcMinMaxValues.stcAllOther.stcMinMaxColumnValuesX.maxColumnData
+		local.stcMinMaxValues.stcAllOther.stcMinMaxColumnValuesY.minColumnData
+		local.stcMinMaxValues.stcAllOther.stcMinMaxColumnValuesY.maxColumnData
+		local.stcMinMaxValues.aryMinMaxValuesX
+		local.stcMinMaxValues.aryMinMaxValuesY
+		local.stcMinMaxValues.stcMinMaxColumnValuesX.minColumnData
+		local.stcMinMaxValues.stcMinMaxColumnValuesX.maxColumnData
+		local.stcMinMaxValues.stcMinMaxColumnValuesY.minColumnData
+		local.stcMinMaxValues.stcMinMaxColumnValuesY.maxColumnData
+	 --->
+	<cfset local.stcMinMaxValues = {
+		aryMinMaxValuesX = arrayNew(1)
+		, aryMinMaxValuesY = arrayNew(1)
+	}/>
+	<cfloop list="SmallBus,8a,WomanOwned,SmallDisadv,DisabledVetOwned,HUBZone" index="local.i">
+		<cfset local.stcMinMaxValues["stc#local.i#"] = structNew()/>
+		<cfloop list="X,Y" index="local.j">
+			<cfset local.stcMinMaxValues["stc#local.i#"]["stcMinMaxColumnValues#local.j#"] = getMinMaxValues(
+				objData = request.stcData.stcMultiSeriesData["qryData_#local.i#"]
+				, strQueryColumn = arguments["strValueColumn#local.j#"]
+				, strDataType = arguments["strValueColumnDataType#local.j#"]
+			)/>
+			<cfset arrayAppend(
+				local.stcMinMaxValues["aryMinMaxValues#local.j#"]
+				, local.stcMinMaxValues["stc#local.i#"]["stcMinMaxColumnValues#local.j#"].minColumnData
+			)/>
+			<cfset arrayAppend(
+				local.stcMinMaxValues["aryMinMaxValues#local.j#"]
+				, local.stcMinMaxValues["stc#local.i#"]["stcMinMaxColumnValues#local.j#"].maxColumnData
+			)/>
+		</cfloop>
+	</cfloop>
+	<cfset local.stcMinMaxValues.stcMinMaxColumnValuesX = getMinMaxValues(
+		objData = local.stcMinMaxValues.aryMinMaxValuesX
+		, strDataType = arguments["strValueColumnDataTypeX"]
+	)/>
+	<cfset local.stcMinMaxValues.stcMinMaxColumnValuesY = getMinMaxValues(
+		objData = local.stcMinMaxValues.aryMinMaxValuesY
+		, strDataType = arguments["strValueColumnDataTypeY"]
+	)/>
 	<cfsavecontent variable="local.strContent">
 		<cfoutput>
-			<svg id="#arguments.strChartId#"></svg>
+			<svg id="#arguments.strChartId#" width="#arguments.intChartWidth#" height="#arguments.intChartHeight#"></svg>
 			<script>
 				<!--- objChartData["jsnData_#local.i#"] --->
 				var objChartData = {
-					<cfset local.iCount = 0/>
+					<cfset local.iCount = 0/><!--- allOther, --->
 					<cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i">
 						<cfset local.iCount++/>
+						<!---
+						<cfset local.strD3JSON = serializeD3JSON(
+							qryData = request.stcData.stcMultiSeriesData["qryData_#local.i#"]
+							, strValueColumnX = arguments.strValueColumnX
+							, strValueColumnY = arguments.strValueColumnY
+							, bolWrapValuesWithQuotesX = arguments.bolWrapValuesWithQuotesX
+							, bolWrapValuesWithQuotesY = arguments.bolWrapValuesWithQuotesY
+						)/>
+						<cfif len(trim(reReplaceNoCase(local.strD3JSON, "[\[\]\s]", "", "all")))>
+							#local.iCount GT 1 ? ", " : ""#jsnData_#local.i#: #local.strD3JSON#
+						</cfif> --->
 						#local.iCount GT 1 ? ", " : ""#jsnData_#local.i#: #serializeD3JSON(
 							qryData = request.stcData.stcMultiSeriesData["qryData_#local.i#"]
 							, strValueColumnX = arguments.strValueColumnX
 							, strValueColumnY = arguments.strValueColumnY
+							, strValueColumnDataTypeX = arguments.strValueColumnDataTypeX
+							, strValueColumnDataTypeY = arguments.strValueColumnDataTypeY
 							, bolWrapValuesWithQuotesX = arguments.bolWrapValuesWithQuotesX
 							, bolWrapValuesWithQuotesY = arguments.bolWrapValuesWithQuotesY
 						)#
@@ -450,24 +619,33 @@
 				)#; --->
 
 				/*-- Next, let's define some constants like width, height, left margin, etc., which we'll use while creating the graph. --*/
-				var vis = d3.select("##sb_multi_series_line_chart")
+				var vis = d3.select("###arguments.strChartId#")
 					, WIDTH = #arguments.intChartWidth#
 					, HEIGHT = #arguments.intChartHeight#
 					, MARGINS = {
-						top: 20
-						, right: 20
-						, bottom: 20
-						, left: 50
+						top: #arguments.intTopMargin#
+						, right: #arguments.intRightMargin#
+						, bottom: #arguments.intBottomMargin#
+						, left: #arguments.intLeftMargin#
 					}
+
 					, xScale = d3.scale.linear().range([MARGINS.left, WIDTH - MARGINS.right]).domain([
-						<!--- #("min(listQualify(valueList(request.stcData.#local.strQueryName#.#strValueColumnX#), """"))")# --->
-						#min(1, 2)#
-						<!--- #min(evaluate("valueList(request.stcData.#local.strQueryName#.#strValueColumnX#)"))#
-						, #max(evaluate("valueList(request.stcData.#local.strQueryName#.#strValueColumnX#)"))#
+						<cfif arguments.strValueColumnDataTypeX IS "date">
+							new Date(#local.strQuotesX##local.stcMinMaxValues.stcMinMaxColumnValuesX.minColumnData##local.strQuotesX#)
+							, new Date(#local.strQuotesX##local.stcMinMaxValues.stcMinMaxColumnValuesX.maxColumnData##local.strQuotesX#)
+						<cfelse>
+							#local.strQuotesX##local.stcMinMaxValues.stcMinMaxColumnValuesX.minColumnData##local.strQuotesX#
+							, #local.strQuotesX##local.stcMinMaxValues.stcMinMaxColumnValuesX.maxColumnData##local.strQuotesX#
+						</cfif>
 					])
 					, yScale = d3.scale.linear().range([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([
-						#min(evaluate("valueList(request.stcData.#local.strQueryName#.#strValueColumnY#)"))#
-						, #max(evaluate("valueList(request.stcData.#local.strQueryName#.#strValueColumnY#)"))# --->
+						<cfif arguments.strValueColumnDataTypeY IS "date">
+							new Date(#local.strQuotesY##local.stcMinMaxValues.stcMinMaxColumnValuesY.minColumnData##local.strQuotesY#)
+							, new Date(#local.strQuotesY##local.stcMinMaxValues.stcMinMaxColumnValuesY.maxColumnData##local.strQuotesY#)
+						<cfelse>
+							#local.strQuotesY##local.stcMinMaxValues.stcMinMaxColumnValuesY.minColumnData##local.strQuotesY#
+							, #local.strQuotesY##local.stcMinMaxValues.stcMinMaxColumnValuesY.maxColumnData##local.strQuotesY#
+						</cfif>
 					])
 					/*-- Next, let's create the axes using the scales defined in the above code. --*/
 					, xAxis = d3.svg.axis().scale(xScale)
@@ -501,12 +679,15 @@
 
 				/*-- Append a line path to svg and map the data to the plotting space using the lineGen function.
 					Also specify a few attributes for the line such as stroke color, stroke-width, etc. --*/
-				vis.append('svg:path')
-					.attr('d', lineGen(chartData))
-					.attr('stroke', 'green')
-					.attr('stroke-width', 2)
-					.attr('fill', 'none');
-
+				<!--- objChartData["jsnData_#local.i#"] --->
+				//console.log(objChartData.toSource())
+				<cfloop list="smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone" index="local.i"><!--- AllOther --->
+					vis.append('svg:path')
+						.attr('d', lineGen(objChartData["jsnData_#local.i#"]))
+						.attr('stroke', '###request.stcBusinessCagoryColors["str#local.i#"]#')
+						.attr('stroke-width', 2)
+						.attr('fill', 'none');
+				</cfloop>
 			</script>
 		</cfoutput>
 	</cfsavecontent>
@@ -514,7 +695,106 @@
 	<cfreturn local.strContent/>
 </cffunction>
 
-<cffunction name="minQueryValue" returnType="any">
-	<cfargument name="qryData" type="query" required="true"/>
-	<cfargument name="qryData" type="query" required="true"/>
+<cffunction name="getMinMaxValues" returnType="any">
+	<cfargument name="objData" type="any" required="true"/>
+	<cfargument name="strQueryColumn" type="string" default=""/>
+	<cfargument name="strDataType" type="string" default=""/>
+
+	<!--- If arguments.objData is not a query with a valid specified column name, and is not an array, and is not a list (string - simple value), throw error: --->
+	<cfif NOT (
+		(
+			isQuery(arguments.objData) AND listFindNoCase(arguments.objData.columnList, arguments.strQueryColumn)
+		) OR isArray(arguments.objData)
+		OR isSimpleValue(arguments.objData)
+	)>
+		<cfthrow message="The 'objData' argument must be a query, array or list. If it's a query, you must also supply a valid query column name via the 'strQueryColumn' argument.">
+	</cfif>
+	<cfif len(arguments.strDataType) AND NOT listFindNoCase("integer,bigint,double,decimal,varchar,binary,bit,time,date", arguments.strDataType)>
+		<cfthrow message="If given, the 'strDataType' argument must be one of the following: integer, bigint, double, decimal, varchar, binary, bit, time or date"/>
+	</cfif>
+
+	<cfset local.qryData = queryNew("x")/>
+
+	<cfif isSimpleValue(arguments.objData)>
+		<cfif len(arguments.strDataType)>
+			<cfset queryAddColumn(local.qryData, "columnData", arguments.strDataType, listToArray(arguments.objData))/>
+		<cfelse>
+			<cfset queryAddColumn(local.qryData, "columnData", listToArray(arguments.objData))/>
+		</cfif>
+	<cfelseif isArray(arguments.objData)>
+		<cfif len(arguments.strDataType)>
+			<cfset queryAddColumn(local.qryData, "columnData", arguments.strDataType, arguments.objData)/>
+		<cfelse>
+			<cfset queryAddColumn(local.qryData, "columnData", arguments.objData)/>
+		</cfif>
+	<cfelse>
+		<cfquery name="local.qryData" dbtype="query">
+			SELECT [#arguments.strQueryColumn#] AS [columnData]
+			FROM arguments.objData
+		</cfquery>
+	</cfif>
+
+	<cfquery name="local.qryData" dbtype="query">
+		SELECT MIN([columnData]) AS [minColumnData], MAX([columnData]) AS [maxColumnData]
+		FROM local.qryData
+	</cfquery>
+
+	<cfreturn {
+		minColumnData = local.qryData.minColumnData
+		, maxColumnData = local.qryData.maxColumnData
+	}/>
+
+</cffunction>
+
+<cffunction name="getMultiSeriesYTDData" returnType="query">
+
+	<cfquery name="local.qryMinMaxData" dbtype="query">
+		SELECT MIN([signedDate]) AS minSignedDate, MAX([signedDate]) AS maxSignedDate
+		FROM request.stcData.objData
+	</cfquery>
+
+	<cfset local.qryData = queryNew(
+		"YTDDate,SmallBus,8a,WomanOwned,SmallDisadv,DisabledVetOwned,HUBZone,All"
+		, "date#repeatString(',numeric', 7)#"
+	)/>
+
+	<cfset local.dteStartMonthDate = createDate(
+		year(local.qryMinMaxData.minSignedDate)
+		, month(local.qryMinMaxData.minSignedDate)
+		, 1
+	)/>
+	<cfset local.dteEndMonthDate = createDate(
+		year(local.qryMinMaxData.maxSignedDate)
+		, month(local.qryMinMaxData.maxSignedDate)
+		, 1
+	)/>
+	<cfset local.dteCurrentMonthDate = dateAdd("m",-1, local.dteStartMonthDate)/>
+
+	<cfloop condition="local.dteCurrentMonthDate LTE local.dteEndMonthDate">
+		<cfset local.dteCurrentMonthDate = dateAdd("m", 1, local.dteCurrentMonthDate)/>
+		<cfset local.dteCriteriaDate = createDate(
+			year(local.dteCurrentMonthDate)
+			, month(local.dteCurrentMonthDate)
+			, daysInMonth(local.dteCurrentMonthDate)
+		)/>
+		<cfset queryAddRow(local.qryData)/>
+		<cfset querySetCell(local.qryData, "YTDDate", local.dteCriteriaDate)/>
+		<cfloop list="SmallBus,8a,WomanOwned,SmallDisadv,DisabledVetOwned,HUBZone" index="local.i">
+			<cfquery name="local.qryObligatedAmount" dbtype="query">
+				SELECT SUM([obligatedAmount]) AS obligated_amount_to_date_nbr
+				FROM request.stcData.stcMultiSeriesData.qryData_#local.i#
+				WHERE [signedDate] <= <cfqueryparam value="#local.dteCriteriaDate#" cfsqltype="cf_sql_date"/>
+			</cfquery>
+			<cfset querySetCell(local.qryData, local.i, local.qryObligatedAmount.obligated_amount_to_date_nbr)/>
+		</cfloop>
+		<cfquery name="local.qryObligatedAmount" dbtype="query">
+			SELECT SUM([obligatedAmount]) AS obligated_amount_to_date_nbr
+			FROM request.stcData.objData
+			WHERE [signedDate] <= <cfqueryparam value="#local.dteCriteriaDate#" cfsqltype="cf_sql_date"/>
+		</cfquery>
+		<cfset querySetCell(local.qryData, "All", local.qryObligatedAmount.obligated_amount_to_date_nbr)/>
+	</cfloop>
+
+	<cfreturn local.qryData/>
+
 </cffunction>
