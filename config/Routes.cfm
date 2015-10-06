@@ -12,12 +12,10 @@
 
 	// Base URL
 	if( len(getSetting('AppMapping') ) lte 1){
-		//setBaseURL("http://#cgi.HTTP_HOST#/index.cfm");
-		setBaseURL("http://#cgi.HTTP_HOST#/index.cfm/usaspending/d3_individual");
+		setBaseURL("http://#cgi.HTTP_HOST#/index.cfm");
 	}
 	else{
-		//setBaseURL("http://#cgi.HTTP_HOST#/#getSetting('AppMapping')#/index.cfm");
-		setBaseURL("http://#cgi.HTTP_HOST#/#getSetting('AppMapping')#/index.cfm/usaspending/d3_individual");
+		setBaseURL("http://#cgi.HTTP_HOST#/#getSetting('AppMapping')#/index.cfm");
 	}
 
 	// MY Routes
