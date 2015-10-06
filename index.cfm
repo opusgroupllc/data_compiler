@@ -8,5 +8,3 @@ Description :
 ----------------------------------------------------------------------->
 <cfsetting enablecfoutputonly="no">
 
-<!--- <cfset variables.form_action = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/d3_individual"/>
-<cflocation url="#variables.form_action#" addtoken="false"/> --->

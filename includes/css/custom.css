@@ -60,6 +60,10 @@ div.alert {
 	padding: 10px; 
 }
 
+#beta_warning {
+	width: 1082px; ; 
+}
+
 .data_table_div {
 	float: left; 
 	clear: left; 
@@ -98,7 +102,8 @@ div.alert {
 }
 #data_form {
 	/*border: solid 1px #ff0000; */
-	float: left;  
+	float: left;
+	clear: left;  
 	width: 260px;  
 	margin: 5px; 
 	padding: 15px; 
