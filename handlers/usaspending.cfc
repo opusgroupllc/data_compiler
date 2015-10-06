@@ -43,6 +43,13 @@
 		<cfparam name="form.maj_agency_cat" default=""/>
 		<cfparam name="form.fiscal_year" default="2015"/>
 
+		<cfset request.stcError = {
+			bolError = false
+			, strErrorMessage = ""
+		}/>
+
+		<cfset request.form_action = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/d3_individual"/>
+
 		<cfset request.stcBusinessCagoryColors = {
 			strSmallBus = "FF9900"
 			, str8a = "0040FF"
@@ -54,37 +61,48 @@
 		}/>
 
 		<cfif val(form.data_form_submitted)>
+			<cftry>
+				<cfset local.stcURLParams = structNew()/>
+				<cfloop list="detail,max_records,stateCode,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
+					<cfif structKeyExists(form, local.i) AND len(trim(form[local.i]))>
+						<cfset local.stcURLParams[local.i] = form[local.i]/>
+					</cfif>
+				</cfloop>
 
-			<cfset local.stcURLParams = structNew()/>
-			<cfloop list="detail,max_records,stateCode,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
-				<cfif structKeyExists(form, local.i) AND len(trim(form[local.i]))>
-					<cfset local.stcURLParams[local.i] = form[local.i]/>
-				</cfif>
-			</cfloop>
+				<cfset request.stcData = structNew()/>
+				<cfset request.stcData.objData = this.parseXMLResponse(
+					strDetailLevel = form.detail
+					, strXMLData = this.getXMLResponse(
+						stcURLParams = local.stcURLParams
+					).fileContent
+				)/>
 
-			<cfset request.stcData = structNew()/>
-			<cfset request.stcData.objData = this.parseXMLResponse(
-				strDetailLevel = form.detail
-				, strXMLData = this.getXMLResponse(
-					stcURLParams = local.stcURLParams
-				).fileContent
-			)/>
+				<!--- ----------------------------------------------------------------------------------------------- --->
+				<cfset request.stcData.stcDonutData = structNew()/>
+				<cfset variables.stcDonutData = this.groupChartDataBySmallBusinessCategory(qryData = request.stcData.objData)/>
+				<cfloop list="#structKeyList(variables.stcDonutData)#" index="variables.i">
+					<cfset request.stcData.stcDonutData[variables.i] = variables.stcDonutData[variables.i]/>
+				</cfloop>
+				<cfset structDelete(variables, "stcData.stcDonutData")/>
 
-			<!--- ----------------------------------------------------------------------------------------------- --->
-			<cfset request.stcData.stcDonutData = structNew()/>
-			<cfset variables.stcDonutData = this.groupChartDataBySmallBusinessCategory(qryData = request.stcData.objData)/>
-			<cfloop list="#structKeyList(variables.stcDonutData)#" index="variables.i">
-				<cfset request.stcData.stcDonutData[variables.i] = variables.stcDonutData[variables.i]/>
-			</cfloop>
-			<cfset structDelete(variables, "stcData.stcDonutData")/>
+				<!--- ----------------------------------------------------------------------------------------------- --->
+				<cfset request.stcData.stcMultiSeriesData = structNew()/>
+				<cfset variables.stcMultiSeriesData = this.separateChartDataBySmallBusinessCategory(qryData = request.stcData.objData)/>
+				<cfloop list="#structKeyList(variables.stcMultiSeriesData)#" index="variables.i">
+					<cfset request.stcData.stcMultiSeriesData[variables.i] = variables.stcMultiSeriesData[variables.i]/>
+				</cfloop>
+				<cfset structDelete(variables, "stcData")/>
 
-			<!--- ----------------------------------------------------------------------------------------------- --->
-			<cfset request.stcData.stcMultiSeriesData = structNew()/>
-			<cfset variables.stcMultiSeriesData = this.separateChartDataBySmallBusinessCategory(qryData = request.stcData.objData)/>
-			<cfloop list="#structKeyList(variables.stcMultiSeriesData)#" index="variables.i">
-				<cfset request.stcData.stcMultiSeriesData[variables.i] = variables.stcMultiSeriesData[variables.i]/>
-			</cfloop>
-			<cfset structDelete(variables, "stcData")/>
+				<cfcatch>
+					<cfset request.stcError = {
+						bolError = true
+						, strErrorMessage = "There was a problem retrieving the requested data. This could be due their being "
+							& "no records matching the criteria, or a USASpending.gov server timeout. Please try again in a "
+							& "few minutes or try a different Agency."
+					}/>
+				</cfcatch>
+
+			</cftry>
 
 		</cfif>
 		<!--- <cfset request.qryBranches = this.getBranches()/> --->

@@ -1,20 +1,26 @@
-<h1>USASpending.gov > D3</h1>
+
 
 <!--- <cfdump var="#request.qryBranches#"/> --->
 <!--- <cfdump var="#request.qryAgencyCodes#"/> --->
 <!--- <cfdump var="#request.qryBranchesAndAgencyCodes#"/> --->
 
 <cfoutput>
-	<cfset variables.form_action = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/d3_individual"/>
 	<cfinclude template="../includes/data_form.cfm"/>
 
-	<cfif isDefined("request.stcData.stcDonutData")>
+	<cfif NOT (NOT request.stcError.bolError AND isDefined("request.stcData.stcDonutData"))>
+		<cfif len(request.stcError.strErrorMessage)>
+			<div class="alert alert-danger" role="alert">#request.stcError.strErrorMessage#</div>
+		</cfif>
+	<cfelse>
 		<cfset variables.stcDonutSettings = {
 			intChartWidth = 250
 			, intChartHeight = 250
 			, strInnerRadius = "120"
 			, strOuterRadius = "100"
 		}/>
+		<div style="float: left; " class="alert alert-success" role="alert">
+			#numberFormat(request.stcData.objData.recordCount, "999,999,999,999")# records retrieved.
+		</div>
 
 		<div id="charts_container">
 			<div class="multi_series_line_chart">

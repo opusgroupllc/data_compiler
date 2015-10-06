@@ -2,7 +2,7 @@
 	<form
 		name="data_form"
 		id="data_form"
-		action="#variables.form_action#"
+		action="#request.form_action#"
 		method="post"
 		<!--- class="form-inline" --->
 	>
@@ -11,21 +11,22 @@
 			<div class="form-group form-group-half-width" style="padding-right: 10px; ">
 				<label for="detail">Detail Level</label>
 				<select name="detail" id="detail" class="form-control">
-					<option value="s" #form.detail IS 's' ? 'selected' : ''#>Summary</option>
+					<!--- <option value="s" #form.detail IS 's' ? 'selected' : ''#>Summary</option>
 					<option value="l" #form.detail IS 'l' ? 'selected' : ''#>Low</option>
 					<option value="m" #form.detail IS 'm' ? 'selected' : ''#>Medium</option>
-					<option value="b" #form.detail IS 'b' ? 'selected' : ''#>Basic</option>
+					<option value="b" #form.detail IS 'b' ? 'selected' : ''#>Basic</option> --->
 					<option value="c" #form.detail IS 'c' ? 'selected' : ''#>Complete</option>
 				</select>
 			</div>
 			<div class="form-group form-group-half-width" style="">
 				<label for="max_records">Max Records</label>
 				<select name="max_records" id="max_records" class="form-control">
-					<cfloop list="10,25,50,100,250,500,750,1000" index="variables.i">
+					<option value=""> - SELECT - </option>
+					<cfloop list="10,25,50,100,250,500,750,1000,2500,5000,10000,25000,50000,100000,1000000,1000000000" index="variables.i">
 						<option
 							value="#variables.i#"
 							#form.max_records IS '#variables.i#' ? 'selected' : ''#
-						>#variables.i#</option>
+						>#numberFormat(variables.i, "999,999")#</option>
 					</cfloop>
 				</select>
 			</div>
