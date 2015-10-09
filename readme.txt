@@ -1,4 +1,6 @@
-﻿This is a partially functional mockup for a project.
+﻿This is a partially functional mockup for a small business utilization dashboard.
+﻿
+﻿The dashboard is intended to help visualize the amount of small business spending as a percentage of the entire spending per agency (per each small business category)and show spending transactions over time to represent whether the goals were made early or late into the fiscal year.
 
 While the goal is to eventually pull data directly from FPDS.gov, we are instead pulling via USASpending.gov for the time being.  This is due to the interest of time, because their API is easier to implement.
 
