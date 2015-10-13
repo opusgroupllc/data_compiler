@@ -1,4 +1,6 @@
-﻿This is a partially functional mockup for a small business utilization dashboard.
+﻿# ReadMe:
+
+This is a partially functional mockup for a small business utilization dashboard.
 ﻿
 ﻿The dashboard is intended to help visualize the amount of small business spending as a percentage of the entire spending per agency (per each small business category)and show spending transactions over time to represent whether the goals were made early or late into the fiscal year.
 
