@@ -24,6 +24,7 @@ component{
 	public boolean function onApplicationStart(){
 		application.cbBootstrap = new coldbox.system.Bootstrap( COLDBOX_CONFIG_FILE, COLDBOX_APP_ROOT_PATH, COLDBOX_APP_KEY, COLDBOX_APP_MAPPING );
 		application.cbBootstrap.loadColdbox();
+		application.spreadsheet = createObject("component", "includes.cfc.spreadsheet.spreadsheet");
 		return true;
 	}
 

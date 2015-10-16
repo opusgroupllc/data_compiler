@@ -69,6 +69,12 @@
 			</div>
 		</div>
 		<div class="form-group">
+			<input type="checkbox" name="generate_spreadsheet" id="generate_spreadsheet" value="1" #isDefined("form.generate_spreadsheet") AND val(form.generate_spreadsheet) ? "checked" : ""#/>
+			<label for="generate_spreadsheet">
+				Generate Spreadsheet
+			</label>
+		</div>
+		<div class="form-group">
 			<input type="submit" name="btn_submit" id="btn_submit" value="Get Data" class="btn btn-primary" style="width: 100%; "/>
 		</div>
 	</form>

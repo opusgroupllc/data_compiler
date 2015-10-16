@@ -1,5 +1,4 @@
 
-
 <!--- <cfdump var="#request.qryBranches#"/> --->
 <!--- <cfdump var="#request.qryAgencyCodes#"/> --->
 <!--- <cfdump var="#request.qryBranchesAndAgencyCodes#"/> --->
@@ -25,6 +24,16 @@
 		<div style="float: left; " class="alert alert-success" role="alert">
 			#numberFormat(request.stcData.objData.recordCount, "999,999,999,999")# records retrieved.
 		</div>
+
+		<cfif val(form.generate_spreadsheet)>
+			<cfif request.stcSpreadsheetError.bolSpreadsheetError>
+				<div class="alert alert-warning" role="alert">#request.stcSpreadsheetError.strSpreadsheetErrorMessage#</div>
+			<cfelse>
+				<script>
+					window.open("#request.spreadsheet_url#");
+				</script>
+			</cfif>
+		</cfif>
 
 		<div id="charts_container">
 			<div class="multi_series_line_chart">

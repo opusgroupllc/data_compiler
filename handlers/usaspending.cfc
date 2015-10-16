@@ -42,13 +42,19 @@
 		<cfparam name="form.mod_agency" default=""/>
 		<cfparam name="form.maj_agency_cat" default=""/>
 		<cfparam name="form.fiscal_year" default="2015"/>
+		<cfparam name="form.generate_spreadsheet" default="0"/>
 
 		<cfset request.stcError = {
 			bolError = false
 			, strErrorMessage = ""
 		}/>
+		<cfset request.stcSpreadsheetError = {
+			bolSpreadsheetError = false
+			, strSpreadsheetErrorMessage = ""
+		}/>
 
 		<cfset request.form_action = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/d3_individual"/>
+		<cfset request.spreadsheet_url = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/deliver_spreadsheet"/>
 
 		<cfset request.stcBusinessCagoryColors = {
 			strSmallBus = "FF9900"
@@ -93,6 +99,18 @@
 				</cfloop>
 				<cfset structDelete(variables, "stcData")/>
 
+				<cftry>
+					<cfif val(form.generate_spreadsheet)>
+						<cfset session.xlsData = this.queryToSpreadsheet(request.stcData)/>
+					</cfif>
+					<cfcatch>
+						<cfset request.stcSpreadsheetError = {
+							bolSpreadsheetError = true
+							, strSpreadsheetErrorMessage = "There was a problem generating a spreadsheet of the data."
+						}/>
+					</cfcatch>
+				</cftry>
+
 				<cfcatch>
 					<cfset request.stcError = {
 						bolError = true
@@ -109,6 +127,20 @@
 		<cfset request.qryAgencyCodes = this.getAgencyCodes()/>
 		<!--- <cfset request.qryBranchesAndAgencyCodes = this.getBranchesAndAgencyCodes()/> --->
 		<cfset event.setView("usaspending/d3_individual")/>
+	</cffunction>
+
+	<cffunction name="deliver_spreadsheet">
+		<cftry>
+			<cfheader name="Content-Disposition" value="attachment; filename=ChartData_#dateTimeFormat(now(), 'yyyymmdd_HHnnss')#.xls"/>
+			<cfcontent type="application/msexcel" variable="#application.spreadsheet.readBinary(session.xlsData)#"/>
+			<cfcatch>
+				<cfset request.stcSpreadsheetError = {
+					bolSpreadsheetError = true
+					, strSpreadsheetErrorMessage = "There was a problem delivering the generated spreadsheet."
+				}/>
+			</cfcatch>
+		</cftry>
+		<cfset event.setView("usaspending/deliver_spreadsheet")/>
 	</cffunction>
 
 	<cffunction name="getXMLResponse" returnType="Struct">
@@ -887,6 +919,58 @@
 		</cfloop>
 
 		<cfreturn local.stcData/>
+
+	</cffunction>
+
+	<cffunction name="queryToSpreadsheet" returnType="Any">
+		<cfargument name="stcData" type="struct" required="true"/>
+
+		<cfset local.xlsData = application.spreadsheet.new("initialSheet")/>
+
+		<cfloop list="#structKeyList(arguments.stcData)#" index="local.strStructKeyName">
+			<cfif isQuery(arguments.stcData[local.strStructKeyName])>
+				<cfset local.strSheetName = reReplaceNoCase(local.strStructKeyName, "(obj|qryData_)", "", "all")/>
+
+				<cfset application.spreadsheet.createSheet(local.xlsData, local.strSheetName)/>
+				<cfset application.spreadsheet.setActiveSheet(local.xlsData, local.strSheetName)/>
+				<cfset application.spreadsheet.addRow(
+					workbook = local.xlsData
+					, data = arguments.stcData[local.strStructKeyName].getColumnList()
+				)/>
+				<cfset application.spreadsheet.addRows(
+					workbook = local.xlsData
+					, data = arguments.stcData[local.strStructKeyName]
+					, row = 2
+					, column = 1
+					, autoSizeColumns = true
+				)/>
+
+			<cfelseif isStruct(arguments.stcData[local.strStructKeyName])>
+				<cfloop list="#structKeyList(arguments.stcData[local.strStructKeyName])#" index="local.strStructKeyName_2">
+					<!--- Sub-struct will either be stcMultiSeriesData or stcDonutData --->
+					<cfset local.strSheetName = reReplaceNoCase(local.strStructKeyName, "(stc|Data)", "", "all") & "_" & replaceNoCase(local.strStructKeyName_2, "qryData_", "", "all")/>
+
+					<cfset application.spreadsheet.createSheet(local.xlsData, local.strSheetName)/>
+					<cfset application.spreadsheet.setActiveSheet(local.xlsData, local.strSheetName)/>
+					<cfset application.spreadsheet.addRow(
+						workbook = local.xlsData
+						, data = arguments.stcData[local.strStructKeyName][local.strStructKeyName_2].getColumnList()
+					)/>
+					<cfset application.spreadsheet.addRows(
+						workbook = local.xlsData
+						, data = arguments.stcData[local.strStructKeyName][local.strStructKeyName_2]
+						, row = 2
+						, column = 1
+						, autoSizeColumns = true
+					)/>
+				</cfloop>
+			</cfif>
+		</cfloop>
+
+		<cfset application.spreadsheet.removeSheet(local.xlsData, "initialSheet")/>
+		<cfset application.spreadsheet.setActiveSheetNumber(local.xlsData, 1)/>
+
+		<cfreturn local.xlsData/>
 
 	</cffunction>
 
