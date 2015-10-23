@@ -8,6 +8,19 @@ This is a partially functional mockup for a small business utilization dashboard
 
 While the goal is to eventually pull data directly from FPDS.gov, we are instead pulling via USASpending.gov for the time being.  This is due to the interest of time, because their API is easier to implement.
 
+##Fields:
+- contractingofficerbusinesssizedetermination
+  - Values (so far found):
+    - S: SMALL BUSINESS
+    - O: OTHER THAN SMALL BUSINESS
+- firm8AFlag (y, true)
+- womenOwnedFlag (y, true)
+- SDBFlag (y, true)
+- SRDVOBFlag (y, true)
+- HUBZoneFlag (y, true)
+- signedDate
+- obligatedAmount (can be negative)
+
 ## Notes:
 - **Small business determination:**
   - Pertaining to a particular NICS code - will be introduced at a later time.
