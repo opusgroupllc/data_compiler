@@ -43,7 +43,7 @@ Description :
 		<cfset var udf = 0>
 
 		<cfif NOT structKeyExists(arguments.CFC, "$mixed")>
-		<cflock name="mixerUtil.#instance.system.identityHashCode(arguments.CFC)#" type="exclusive" timeout="15" throwontimeout="true">
+		<cflock name="mixerUtil.#instance.system.identityHashCode(arguments.CFC)#" type="exclusive" timeout="120" throwontimeout="true">
 			<cfif NOT structKeyExists(arguments.CFC, "$mixed")>
 			<cfscript>
 				for( udf in instance.mixins ){
