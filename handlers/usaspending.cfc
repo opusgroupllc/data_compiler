@@ -33,6 +33,233 @@
 		<cfset event.setView("usaspending/index")/>
 	</cffunction>
 
+	<cffunction name="batch_load_setup">
+		<cfparam name="form.data_form_submitted" default="0"/>
+		<cfparam name="form.detail" default="c"/>
+		<cfparam name="form.max_records" default="10"/>
+		<cfparam name="form.stateCode" default=""/>
+		<!--- <cfparam name="form.agency_id" default="0"/> --->
+		<cfparam name="form.mod_agency" default=""/>
+		<cfparam name="form.maj_agency_cat" default=""/>
+		<cfparam name="form.fiscal_year" default="2015"/>
+		<cfparam name="form.generate_spreadsheet" default="0"/>
+
+		<cfset request.form_action = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/batch_load_process"/>
+		<cfset request.form_action_2 = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/d3_individual"/>
+		<cfset request.qryAgencyCodes = this.getAgencyCodes()/>
+
+		<cfset event.setView("usaspending/batch_load_setup")/>
+
+	</cffunction>
+
+	<cffunction name="batch_load_process">
+
+		<cfset request.form_action = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/d3_individual"/>
+		<cfset request.spreadsheet_url = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/deliver_spreadsheet"/>
+
+		<cfset this.cleanBatchProcessTable()/>
+
+		<!--- <cftry>
+			<cfthrow message="asdf"/>
+			<cfcatch>
+				<cfdump var="#cfcatch#"/>
+			</cfcatch>
+		</cftry> --->
+
+		<cfset request.stcDataChunks = structNew()/>
+		<cfset local.strThreadInitiatorID = reReplaceNoCase(createUUID(), "[^a-zA-Z0-9]", "_", "all")/>
+		<cfset local.lstBatchLoadProcessThreadIdList = ""/>
+		<cfset request.intStep = 500/>
+		<cfloop from="1" to="#form.max_records#" step="#request.intStep#" index="request.t">
+			<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive">
+				<cfset request.strBatchLoadProcessThreadId = "batch_load_process_thread__#local.strThreadInitiatorID#__#request.t#"/>
+				<cfset request.stcDataChunks[request.strBatchLoadProcessThreadId].records_from = request.t/>
+				<cfset local.lstBatchLoadProcessThreadIdList = listAppend(local.lstBatchLoadProcessThreadIdList, request.strBatchLoadProcessThreadId)/>
+				<cfset request.stcDataChunks[request.strBatchLoadProcessThreadId].stcError = {
+					bolError = false
+					, strErrorMessage = ""
+				}/>
+			</cflock>
+			<cfthread action="run" name="#request.strBatchLoadProcessThreadId#">
+				<cftry>
+					<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive"><!--- name="#request.strBatchLoadProcessThreadId#__lock_1"  --->
+						<cfset local.strBatchLoadProcessThreadId = request.strBatchLoadProcessThreadId/>
+						<cfset local.records_from = request.stcDataChunks[request.strBatchLoadProcessThreadId].records_from/>
+						<cfset local.intStep = request.intStep/>
+					</cflock>
+					<cfset local.stcURLParams = structNew()/>
+					<cfloop list="detail,stateCode,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
+						<cfif structKeyExists(form, local.i) AND len(trim(form[local.i]))>
+							<cfset local.stcURLParams[local.i] = form[local.i]/>
+						</cfif>
+						<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive">
+							<cfset local.stcURLParams["max_records"] = request.intStep/>
+							<cfset local.stcURLParams["records_from"] = local.records_from/>
+						</cflock>
+					</cfloop>
+					<cfoutput>
+						local.records_from=#local.records_from#<br />
+						<cfloop list="#structKeyList(local.stcURLParams)#" index="local.x">
+							local.stcURLParams["#local.x#"] = #local.stcURLParams[local.x]#<br />
+						</cfloop>
+					</cfoutput>
+					TRACE_1
+					<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive"><!--- name="#request.strBatchLoadProcessThreadId#__lock_2"  --->
+						<cfset request.stcDataChunks[local.strBatchLoadProcessThreadId] = structNew()/>
+						<cfset request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData = structNew()/>
+					</cflock>
+					<cfset local.objData = this.parseXMLResponse(
+						strDetailLevel = form.detail
+						, strXMLData = this.getXMLResponse(
+							stcURLParams = local.stcURLParams
+						).fileContent
+					)/>
+					<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive"><!--- name="#request.strBatchLoadProcessThreadId#__lock_3"  --->
+						<cfset request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData.objData = local.objData/>
+					</cflock>
+					<cfset structDelete(local, "objData")/>
+
+					<cfoutput>
+						TRACE_2 (request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData.objData.recordCount = #request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData.objData.recordCount#
+					</cfoutput>
+					<cfset local.bolLoadBatchProcessChunkSuccessful = this.loadBatchProcessChunk(
+						strBatchLoadProcessThreadId = local.strBatchLoadProcessThreadId
+						, qryData = request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData.objData
+						, intStartRow = local.records_from
+					)/>
+					<cfoutput>
+						TRACE_3 (local.bolLoadBatchProcessChunkSuccessful = #local.bolLoadBatchProcessChunkSuccessful#)
+					</cfoutput>
+					<cfcatch>
+						TRACE_4
+						<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive"><!--- name="#request.strBatchLoadProcessThreadId#__lock_4"  --->
+							<cfset request.stcDataChunks[local.strBatchLoadProcessThreadId].stcError = {
+								bolError = true
+								, strErrorMessage = "There was a problem retrieving the requested data. This could be due their being "
+									& "no records matching the criteria, or a USASpending.gov server timeout. Please try again in a "
+									& "few minutes or try a different Agency."
+							}/>
+						</cflock>
+						TRACE_5
+						<!--- <cfset request.stcError[local.strBatchLoadProcessThreadId] = duplicate(request.stcDataChunks)/> --->
+						<!--- <cfdump var="#cfcatch#"> --->
+						<cfoutput>
+							Error Message: #cfcatch.Message#<br />
+							Error Detail: #cfcatch.Detail#
+							Template: #cfcatch.TagContext[1].template#:#cfcatch.TagContext[1].line#
+						</cfoutput>
+						TRACE_6
+					</cfcatch>
+				</cftry>
+				TRACE_7
+			</cfthread>
+			TRACE_8
+		</cfloop>
+		<cfthread action="join" name="#local.lstBatchLoadProcessThreadIdList#"/>
+		<cfdump var="#cfthread#">
+		TRACE_9
+	</cffunction>
+
+	<cffunction name="cleanBatchProcessTable" returnType="boolean">
+		<cftry>
+			<cfquery name="local.qryData">
+				TRUNCATE TABLE test_data
+			</cfquery>
+			<cfcatch>
+				<cfreturn false/>
+			</cfcatch>
+		</cftry>
+		<cfreturn true/>
+	</cffunction>
+
+	<cffunction name="loadBatchProcessChunk" returnType="boolean">
+		<cfargument name="strBatchLoadProcessThreadId" type="string" required="true"/>
+		<cfargument name="qryData" type="query" required="true"/>
+		<cfargument name="intStartRow" type="numeric" required="true"/>
+
+		<cfif arguments.qryData.recordCount>
+			<cftry>
+				<cftransaction>
+					<cfloop query="arguments.qryData">
+						<cfquery name="local.qryInsertData">
+							INSERT INTO test_data (
+								batch_load_process_thread_id
+								, spendingcategory
+								, obligatedamount
+								, maj_agency_cat
+								, maj_fund_agency_cat
+								, signeddate
+								, agencyid
+								, piid
+								, fiscal_year
+								, idvmodificationnumber
+								, firm8aflag
+								, hubzoneflag
+								, sdbflag
+								, womenownedflag
+								, srdvobflag
+								, contractingofficerbusinesssizedetermination
+								, last_modified_date
+								, idvagency
+								, idvprocurementinstrumentid
+								, is_type_none_bt
+								, is_type_8a_bt
+								, is_type_women_owned_bt
+								, is_type_small_disadvantaged_bt
+								, is_type_disabled_vet_owned_bt
+								, is_type_hub_zone_bt
+								, year_month_dt
+								, transactionnumber
+								, retrieved_record_nbr
+							) VALUES (
+								<cfqueryparam value="#arguments.strBatchLoadProcessThreadId#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.spendingcategory#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.obligatedamount#" cfsqltype="cf_sql_float"/>
+								, <cfqueryparam value="#arguments.qryData.maj_agency_cat#" cfsqltype="cf_sql_int"/>
+								, <cfqueryparam value="#arguments.qryData.maj_fund_agency_cat#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.signeddate#" cfsqltype="cf_sql_timestamp"/>
+								, <cfqueryparam value="#arguments.qryData.agencyid#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.piid#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.fiscal_year#" cfsqltype="cf_sql_int"/>
+								, <cfqueryparam value="#arguments.qryData.idvmodificationnumber#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.firm8aflag#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.hubzoneflag#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.sdbflag#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.womenownedflag#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.srdvobflag#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.contractingofficerbusinesssizedetermination#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.last_modified_date#" cfsqltype="cf_sql_timestamp"/>
+								, <cfqueryparam value="#arguments.qryData.idvagency#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.idvprocurementinstrumentid#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.is_type_none_bt#" cfsqltype="cf_sql_bit"/>
+								, <cfqueryparam value="#arguments.qryData.is_type_8a_bt ? 1 : 0#" cfsqltype="cf_sql_bit"/>
+								, <cfqueryparam value="#arguments.qryData.is_type_women_owned_bt ? 1 : 0#" cfsqltype="cf_sql_bit"/>
+								, <cfqueryparam value="#arguments.qryData.is_type_small_disadvantaged_bt ? 1 : 0#" cfsqltype="cf_sql_bit"/>
+								, <cfqueryparam value="#arguments.qryData.is_type_disabled_vet_owned_bt ? 1 : 0#" cfsqltype="cf_sql_bit"/>
+								, <cfqueryparam value="#arguments.qryData.is_type_hub_zone_bt ? 1 : 0#" cfsqltype="cf_sql_bit"/>
+								, <cfqueryparam value="#arguments.qryData.year_month_dt#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#arguments.qryData.transactionnumber#" cfsqltype="cf_sql_varchar"/>
+								, <cfqueryparam value="#(arguments.intStartRow - 1) + arguments.qryData.currentRow#" cfsqltype="cf_sql_bigint"/>
+							)
+						</cfquery>
+					</cfloop>
+				</cftransaction>
+				<cfcatch>
+					<cfoutput>
+						ERROR in loadBatchProcessChunk():<br />
+						Error Message: #cfcatch.Message#<br />
+						Error Detail: #cfcatch.Detail#<br />
+						Template: #cfcatch.TagContext[1].template#:#cfcatch.TagContext[1].line#<br /><br />
+					</cfoutput>
+					<cfreturn false/>
+				</cfcatch>
+			</cftry>
+		<cfelse>
+			<cfreturn false/>
+		</cfif>
+		<cfreturn true/>
+	</cffunction>
+
 	<cffunction name="d3_individual">
 		<cfparam name="form.data_form_submitted" default="0"/>
 		<cfparam name="form.detail" default="c"/>

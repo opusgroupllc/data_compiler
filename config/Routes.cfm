@@ -24,6 +24,8 @@
 
 	addRoute(pattern = "/usaspending/:action?", handler = "usaspending", action = "index");
 	addRoute(pattern = "/usaspending/:action?", handler = "usaspending", action = "d3_individual");
+	addRoute(pattern = "/usaspending/:action?", handler = "usaspending", action = "batch_load_setup");
+	addRoute(pattern = "/usaspending/:action?", handler = "usaspending", action = "batch_load_process");
 	addRoute(pattern = "/usaspending/:action?", handler = "usaspending", action = "deliver_spreadsheet");
 
 	// Your Application Routes

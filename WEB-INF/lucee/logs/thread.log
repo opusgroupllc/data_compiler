@@ -1,0 +1,324 @@
+"Severity","ThreadID","Date","Time","Application","Message"
+"ERROR","cfthread-16","10/27/2015","18:03:18","","cfthread-16;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:100):100
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-19","10/27/2015","18:03:37","","cfthread-19;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:100):100
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-18","10/27/2015","18:03:50","","cfthread-18;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:100):100
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-20","10/27/2015","18:03:55","","cfthread-20;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:100):100
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-15","10/27/2015","18:04:02","","cfthread-15;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:100):100
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-17","10/27/2015","18:04:02","","cfthread-17;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:100):100
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-26","10/27/2015","18:08:33","","cfthread-26;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:102):102
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-25","10/27/2015","18:08:33","","cfthread-25;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:102):102
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-27","10/27/2015","18:08:33","","cfthread-27;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:102):102
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-29","10/27/2015","18:09:44","","cfthread-29;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:102):102
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-28","10/27/2015","18:09:44","","cfthread-28;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:102):102
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-30","10/27/2015","18:09:44","","cfthread-30;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:102):102
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-32","10/27/2015","18:10:13","","cfthread-32;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:103):103
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-33","10/27/2015","18:10:13","","cfthread-33;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:103):103
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-31","10/27/2015","18:10:13","","cfthread-31;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:103):103
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-34","10/27/2015","18:10:51","","cfthread-34;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:102):102
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-36","10/27/2015","18:10:51","","cfthread-36;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:102):102
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-35","10/27/2015","18:10:51","","cfthread-35;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:102):102
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-38","10/27/2015","18:12:37","","cfthread-38;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:104):104
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-37","10/27/2015","18:12:37","","cfthread-37;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:104):104
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-39","10/27/2015","18:12:37","","cfthread-39;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].;The key [STRBATCHLOADPROCESSTHREADID] does not exist, only the following keys are available: [attributes,cfcatch,i,STCURLPARAMS].
+	at lucee.runtime.type.util.StructSupport.invalidKey(StructSupport.java:63):63
+	at lucee.runtime.type.StructImpl.get(StructImpl.java:120):120
+	at lucee.runtime.type.util.StructSupport.get(StructSupport.java:237):237
+	at lucee.runtime.util.VariableUtilImpl.get(VariableUtilImpl.java:255):255
+	at lucee.runtime.PageContextImpl.get(PageContextImpl.java:1435):1435
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:104):104
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-96","10/28/2015","12:18:34","","cfthread-96;invalid attribute combination
+attribute [name] and [scope] can't be used together;invalid attribute combination
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:198):198
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-95","10/28/2015","12:18:34","","cfthread-95;invalid attribute combination
+attribute [name] and [scope] can't be used together;invalid attribute combination
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:198):198
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-94","10/28/2015","12:18:34","","cfthread-94;invalid attribute combination
+attribute [name] and [scope] can't be used together;invalid attribute combination
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:198):198
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-0","10/28/2015","12:39:40","","cfthread-0;java.lang.InterruptedException;java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1326):1326
+	at java.util.concurrent.locks.ReentrantReadWriteLock$ReadLock.tryLock(ReentrantReadWriteLock.java:871):871
+	at lucee.commons.lock.rw.RWLock.lock(RWLock.java:48):48
+	at lucee.commons.lock.rw.RWWrap.lock(RWKeyLock.java:147):147
+	at lucee.commons.lock.rw.RWKeyLock.lock(RWKeyLock.java:53):53
+	at lucee.runtime.lock.LockManagerImpl.lock(LockManagerImpl.java:55):55
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:239):239
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-2","10/28/2015","12:39:40","","cfthread-2;java.lang.InterruptedException;java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1326):1326
+	at java.util.concurrent.locks.ReentrantReadWriteLock$ReadLock.tryLock(ReentrantReadWriteLock.java:871):871
+	at lucee.commons.lock.rw.RWLock.lock(RWLock.java:48):48
+	at lucee.commons.lock.rw.RWWrap.lock(RWKeyLock.java:147):147
+	at lucee.commons.lock.rw.RWKeyLock.lock(RWKeyLock.java:53):53
+	at lucee.runtime.lock.LockManagerImpl.lock(LockManagerImpl.java:55):55
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:239):239
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-5","10/28/2015","12:40:49","","cfthread-5;java.lang.InterruptedException;java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1326):1326
+	at java.util.concurrent.locks.ReentrantReadWriteLock$ReadLock.tryLock(ReentrantReadWriteLock.java:871):871
+	at lucee.commons.lock.rw.RWLock.lock(RWLock.java:48):48
+	at lucee.commons.lock.rw.RWWrap.lock(RWKeyLock.java:147):147
+	at lucee.commons.lock.rw.RWKeyLock.lock(RWKeyLock.java:53):53
+	at lucee.runtime.lock.LockManagerImpl.lock(LockManagerImpl.java:55):55
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:239):239
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-4","10/28/2015","12:40:50","","cfthread-4;java.lang.ThreadDeath;lucee.runtime.exp.PageRuntimeException: java.lang.ThreadDeath
+	at lucee.commons.lock.rw.RWKeyLock.lock(RWKeyLock.java:65)
+	at lucee.runtime.lock.LockManagerImpl.lock(LockManagerImpl.java:55)
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:239)
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115)
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199)
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148)
+"
+"ERROR","cfthread-8","10/28/2015","13:14:00","","cfthread-8;java.lang.InterruptedException;java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1326):1326
+	at java.util.concurrent.locks.ReentrantReadWriteLock$ReadLock.tryLock(ReentrantReadWriteLock.java:871):871
+	at lucee.commons.lock.rw.RWLock.lock(RWLock.java:48):48
+	at lucee.commons.lock.rw.RWWrap.lock(RWKeyLock.java:147):147
+	at lucee.commons.lock.rw.RWKeyLock.lock(RWKeyLock.java:53):53
+	at lucee.runtime.lock.LockManagerImpl.lock(LockManagerImpl.java:55):55
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:239):239
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-7","10/28/2015","13:14:00","","cfthread-7;java.lang.InterruptedException;java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1326):1326
+	at java.util.concurrent.locks.ReentrantReadWriteLock$ReadLock.tryLock(ReentrantReadWriteLock.java:871):871
+	at lucee.commons.lock.rw.RWLock.lock(RWLock.java:48):48
+	at lucee.commons.lock.rw.RWWrap.lock(RWKeyLock.java:147):147
+	at lucee.commons.lock.rw.RWKeyLock.lock(RWKeyLock.java:53):53
+	at lucee.runtime.lock.LockManagerImpl.lock(LockManagerImpl.java:55):55
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:239):239
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-13","10/28/2015","13:37:20","","cfthread-13;java.lang.InterruptedException;java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1326):1326
+	at java.util.concurrent.locks.ReentrantReadWriteLock$ReadLock.tryLock(ReentrantReadWriteLock.java:871):871
+	at lucee.commons.lock.rw.RWLock.lock(RWLock.java:48):48
+	at lucee.commons.lock.rw.RWWrap.lock(RWKeyLock.java:147):147
+	at lucee.commons.lock.rw.RWKeyLock.lock(RWKeyLock.java:53):53
+	at lucee.runtime.lock.LockManagerImpl.lock(LockManagerImpl.java:55):55
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:239):239
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
+"ERROR","cfthread-14","10/28/2015","13:37:20","","cfthread-14;java.lang.InterruptedException;java.lang.InterruptedException
+	at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireSharedNanos(AbstractQueuedSynchronizer.java:1326):1326
+	at java.util.concurrent.locks.ReentrantReadWriteLock$ReadLock.tryLock(ReentrantReadWriteLock.java:871):871
+	at lucee.commons.lock.rw.RWLock.lock(RWLock.java:48):48
+	at lucee.commons.lock.rw.RWWrap.lock(RWKeyLock.java:147):147
+	at lucee.commons.lock.rw.RWKeyLock.lock(RWKeyLock.java:53):53
+	at lucee.runtime.lock.LockManagerImpl.lock(LockManagerImpl.java:55):55
+	at lucee.runtime.tag.Lock.doStartTag(Lock.java:239):239
+	at handlers.usaspending_cfc$cf.threadCall(C:\inetpub\wwwroot\data_compiler\handlers\usaspending.cfc:115):115
+	at lucee.runtime.thread.ChildThreadImpl.execute(ChildThreadImpl.java:199):199
+	at lucee.runtime.thread.ChildThreadImpl.run(ChildThreadImpl.java:148):148
+"
