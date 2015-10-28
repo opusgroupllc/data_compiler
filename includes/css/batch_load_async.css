@@ -1,0 +1,21 @@
+
+#data_form {
+	margin-right: 0px; 
+}
+
+#data_loader_div {
+	max-width: 823px; 
+	float: left; 
+	margin: 5px 0px 0px 0px; 
+	padding: 0px; 
+	/*border: solid 1px #ffcc00; */
+}
+
+.data_loader {
+	float: left; 
+	margin: 0px 0px 10px 15px; 
+	padding: 15px; 
+	width: 259px; 
+	border: solid 1px #ffcc00;
+	border-radius: 5px;  
+}

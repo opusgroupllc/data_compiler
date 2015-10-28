@@ -33,6 +33,60 @@
 		<cfset event.setView("usaspending/index")/>
 	</cffunction>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<cffunction name="batch_load_async">
+		<cfparam name="form.data_form_submitted" default="0"/>
+		<cfparam name="form.detail" default="c"/>
+		<cfparam name="form.max_records" default="10"/>
+		<cfparam name="form.stateCode" default=""/>
+		<!--- <cfparam name="form.agency_id" default="0"/> --->
+		<cfparam name="form.mod_agency" default=""/>
+		<cfparam name="form.maj_agency_cat" default=""/>
+		<cfparam name="form.fiscal_year" default="2015"/>
+		<cfparam name="form.generate_spreadsheet" default="0"/>
+
+		<cfset request.form_action = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/batch_load_async"/>
+		<cfset request.form_action_2 = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/d3_individual"/>
+		<cfset request.qryAgencyCodes = this.getAgencyCodes()/>
+
+		<cfset event.setView("usaspending/batch_load_async")/>
+
+	</cffunction>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<cffunction name="batch_load_setup">
 		<cfparam name="form.data_form_submitted" default="0"/>
 		<cfparam name="form.detail" default="c"/>

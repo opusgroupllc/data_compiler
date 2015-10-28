@@ -75,7 +75,11 @@
 			</label>
 		</div>
 		<div class="form-group">
-			<input type="submit" name="btn_submit" id="btn_submit" value="Get Data" class="btn btn-primary" style="width: 100%; "/>
+			<cfif request.cb_requestContext.getCurrentAction() IS "batch_load_async">
+				<input type="button" name="btn_button" id="btn_button" value="Load Data" class="btn btn-primary" style="width: 100%; "/>
+			<cfelse>
+				<input type="submit" name="btn_submit" id="btn_submit" value="Get Data" class="btn btn-primary" style="width: 100%; "/>
+			</cfif>
 		</div>
 	</form>
 </cfoutput>
