@@ -73,67 +73,71 @@
 		<cfloop from="1" to="#form.max_records#" step="#request.intStep#" index="request.t">
 			<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive">
 				<cfset request.strBatchLoadProcessThreadId = "batch_load_process_thread__#local.strThreadInitiatorID#__#request.t#"/>
-				<cfset request.stcDataChunks[request.strBatchLoadProcessThreadId].records_from = request.t/>
 				<cfset local.lstBatchLoadProcessThreadIdList = listAppend(local.lstBatchLoadProcessThreadIdList, request.strBatchLoadProcessThreadId)/>
 				<cfset request.stcDataChunks[request.strBatchLoadProcessThreadId].stcError = {
 					bolError = false
 					, strErrorMessage = ""
 				}/>
 			</cflock>
-			<cfthread action="run" name="#request.strBatchLoadProcessThreadId#">
+			<cfthread
+				action="run"
+				name="#request.strBatchLoadProcessThreadId#"
+
+				strBatchLoadProcessThreadId="#request.strBatchLoadProcessThreadId#"
+				recordsFrom="#request.t#"
+				intStep="#request.intStep#"
+			>
+				<cfoutput>My Name is: #attributes.strBatchLoadProcessThreadId#</cfoutput>
 				<cftry>
-					<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive"><!--- name="#request.strBatchLoadProcessThreadId#__lock_1"  --->
-						<cfset local.strBatchLoadProcessThreadId = request.strBatchLoadProcessThreadId/>
-						<cfset local.records_from = request.stcDataChunks[request.strBatchLoadProcessThreadId].records_from/>
-						<cfset local.intStep = request.intStep/>
-					</cflock>
-					<cfset local.stcURLParams = structNew()/>
-					<cfloop list="detail,stateCode,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
-						<cfif structKeyExists(form, local.i) AND len(trim(form[local.i]))>
-							<cfset local.stcURLParams[local.i] = form[local.i]/>
+					<cfset attributes.stcURLParams = structNew()/>
+					<cfloop list="detail,stateCode,mod_agency,maj_agency_cat,fiscal_year" index="attributes.i">
+						<cfif structKeyExists(form, attributes.i) AND len(trim(form[attributes.i]))>
+							<cfset attributes.stcURLParams[attributes.i] = form[attributes.i]/>
 						</cfif>
 						<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive">
-							<cfset local.stcURLParams["max_records"] = request.intStep/>
-							<cfset local.stcURLParams["records_from"] = local.records_from/>
+							<cfset attributes.stcURLParams["max_records"] = attributes.intStep/>
+							<cfset attributes.stcURLParams["records_from"] = attributes.recordsFrom/>
 						</cflock>
 					</cfloop>
 					<cfoutput>
-						local.records_from=#local.records_from#<br />
-						<cfloop list="#structKeyList(local.stcURLParams)#" index="local.x">
-							local.stcURLParams["#local.x#"] = #local.stcURLParams[local.x]#<br />
+						attributes.recordsFrom=#attributes.recordsFrom#<br />
+						<cfloop list="#structKeyList(attributes.stcURLParams)#" index="attributes.x">
+							attributes.stcURLParams["#attributes.x#"] = #attributes.stcURLParams[attributes.x]#<br />
 						</cfloop>
 					</cfoutput>
 					TRACE_1
 					<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive"><!--- name="#request.strBatchLoadProcessThreadId#__lock_2"  --->
-						<cfset request.stcDataChunks[local.strBatchLoadProcessThreadId] = structNew()/>
-						<cfset request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData = structNew()/>
+						<cfset request.stcDataChunks[attributes.strBatchLoadProcessThreadId] = structNew()/>
+						<cfset request.stcDataChunks[attributes.strBatchLoadProcessThreadId].stcData = structNew()/>
 					</cflock>
-					<cfset local.objData = this.parseXMLResponse(
+					<cfset attributes.objData = this.parseXMLResponse(
 						strDetailLevel = form.detail
 						, strXMLData = this.getXMLResponse(
-							stcURLParams = local.stcURLParams
+							stcURLParams = attributes.stcURLParams
 						).fileContent
 					)/>
+					<!--- <cfset cfthread.objData = "HELLO!!"/> --->
+					<!--- <cfset cfthread.stcURLParams = attributes.stcURLParams/> --->
 					<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive"><!--- name="#request.strBatchLoadProcessThreadId#__lock_3"  --->
-						<cfset request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData.objData = local.objData/>
+						<cfset request.stcDataChunks[attributes.strBatchLoadProcessThreadId].stcData.objData = attributes.objData/>
 					</cflock>
-					<cfset structDelete(local, "objData")/>
+					<cfset structDelete(attributes, "objData")/>
 
 					<cfoutput>
-						TRACE_2 (request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData.objData.recordCount = #request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData.objData.recordCount#
+						TRACE_2 (request.stcDataChunks[attributes.strBatchLoadProcessThreadId].stcData.objData.recordCount = #request.stcDataChunks[attributes.strBatchLoadProcessThreadId].stcData.objData.recordCount#
 					</cfoutput>
-					<cfset local.bolLoadBatchProcessChunkSuccessful = this.loadBatchProcessChunk(
-						strBatchLoadProcessThreadId = local.strBatchLoadProcessThreadId
-						, qryData = request.stcDataChunks[local.strBatchLoadProcessThreadId].stcData.objData
-						, intStartRow = local.records_from
+					<cfset attributes.bolLoadBatchProcessChunkSuccessful = this.loadBatchProcessChunk(
+						strBatchLoadProcessThreadId = attributes.strBatchLoadProcessThreadId
+						, qryData = request.stcDataChunks[attributes.strBatchLoadProcessThreadId].stcData.objData
+						, intStartRow = attributes.recordsFrom
 					)/>
 					<cfoutput>
-						TRACE_3 (local.bolLoadBatchProcessChunkSuccessful = #local.bolLoadBatchProcessChunkSuccessful#)
+						TRACE_3 (attributes.bolLoadBatchProcessChunkSuccessful = #attributes.bolLoadBatchProcessChunkSuccessful#)
 					</cfoutput>
 					<cfcatch>
 						TRACE_4
 						<cflock timeout="1" scope="request" throwOnTimeout="true" type="exclusive"><!--- name="#request.strBatchLoadProcessThreadId#__lock_4"  --->
-							<cfset request.stcDataChunks[local.strBatchLoadProcessThreadId].stcError = {
+							<cfset request.stcDataChunks[attributes.strBatchLoadProcessThreadId].stcError = {
 								bolError = true
 								, strErrorMessage = "There was a problem retrieving the requested data. This could be due their being "
 									& "no records matching the criteria, or a USASpending.gov server timeout. Please try again in a "
@@ -141,7 +145,7 @@
 							}/>
 						</cflock>
 						TRACE_5
-						<!--- <cfset request.stcError[local.strBatchLoadProcessThreadId] = duplicate(request.stcDataChunks)/> --->
+						<!--- <cfset request.stcError[attributes.strBatchLoadProcessThreadId] = duplicate(request.stcDataChunks)/> --->
 						<!--- <cfdump var="#cfcatch#"> --->
 						<cfoutput>
 							Error Message: #cfcatch.Message#<br />
