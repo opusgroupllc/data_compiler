@@ -68,6 +68,14 @@
 				<input type="text" name="fiscal_year" id="fiscal_year" maxlength="4" size="4" value="#form.fiscal_year#" class="form-control"/>
 			</div>
 		</div>
+			<cfif NOT request.cb_requestContext.getCurrentAction() IS "batch_load_async">
+			<div class="form-group">
+				<input type="checkbox" name="preload_data_bt" id="preload_data_bt" value="1" #isDefined("form.preload_data_bt") AND val(form.preload_data_bt) ? "checked" : ""#/>
+				<label for="preload_data_bt">
+					Use Preloaded Data
+				</label>
+			</div>
+		</cfif>
 		<div class="form-group">
 			<input type="checkbox" name="generate_spreadsheet" id="generate_spreadsheet" value="1" #isDefined("form.generate_spreadsheet") AND val(form.generate_spreadsheet) ? "checked" : ""#/>
 			<label for="generate_spreadsheet">

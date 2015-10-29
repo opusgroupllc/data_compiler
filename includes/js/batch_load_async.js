@@ -73,9 +73,6 @@ function loadData() {
 		}
 	});
 }
-function hello() {
-	alert("x");
-}
 
 //-------------------------------------------------------------------------------
 function getDataSet(strDataLoaderId, intRecordsFrom) {
@@ -139,8 +136,10 @@ $(document).on(
 	"click"
 	, "#btn_button"
 	, function() {
-		$("#data_loader_div").html("");
-		loadData();
+		if (confirm("WARNING: This will delete the currently imported data before loading the requested data, and may take several minutes.\n\nAre you sure you want to proceed?")) {
+			$("#data_loader_div").html("");
+			loadData();
+		}
 	}
 );
 

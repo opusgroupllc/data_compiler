@@ -367,6 +367,7 @@
 		<cfparam name="form.maj_agency_cat" default=""/>
 		<cfparam name="form.fiscal_year" default="2015"/>
 		<cfparam name="form.generate_spreadsheet" default="0"/>
+		<cfparam name="form.preload_data_bt" default="0"/>
 
 		<cfset request.stcError = {
 			bolError = false
@@ -400,12 +401,19 @@
 				</cfloop>
 
 				<cfset request.stcData = structNew()/>
-				<cfset request.stcData.objData = this.parseXMLResponse(
-					strDetailLevel = form.detail
-					, strXMLData = this.getXMLResponse(
-						stcURLParams = local.stcURLParams
-					).fileContent
-				)/>
+				<cfif val(form.preload_data_bt)>
+					<cfset request.stcData.objData = this.getPreloadedData(
+						strDetailLevel = form.detail
+						, stcURLParams = local.stcURLParams
+					)/>
+				<cfelse>
+					<cfset request.stcData.objData = this.parseXMLResponse(
+						strDetailLevel = form.detail
+						, strXMLData = this.getXMLResponse(
+							stcURLParams = local.stcURLParams
+						).fileContent
+					)/>
+				</cfif>
 
 				<!--- ----------------------------------------------------------------------------------------------- --->
 				<cfset request.stcData.stcDonutData = structNew()/>
@@ -479,6 +487,76 @@
 		</cfhttp>
 
 		<cfreturn local.stcXMLResponse/>
+
+	</cffunction>
+
+	<cffunction name="getPreloadedData" returnType="any">
+		<cfargument name="strDetailLevel" type="string" required="true"/>
+		<cfargument name="strSmallBusinessCategory" type="string" default=""/>
+
+		<cfset local.lstSmallBusinessCategories = "none,smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone"/>
+		<cfif len(arguments.strSmallBusinessCategory)
+			AND NOT listFindNoCase(local.lstSmallBusinessCategories, arguments.strSmallBusinessCategory)
+		>
+			<cfthrow message="Only the following values are allowed for arguments.strSmallBusinessCategory: #local.lstSmallBusinessCategories#, or you can leave it blank for all."/>
+		</cfif>
+
+		<cfswitch expression="#arguments.strDetailLevel#">
+			<cfcase value="s">
+				<cfreturn this.parseXMLResponseSummary(xmlXMLData = xmlParse(arguments.strXMLData))/>
+			</cfcase>
+			<cfcase value="l">
+				<cfreturn this.parseXMLResponseLow(xmlXMLData = xmlParse(arguments.strXMLData))/>
+			</cfcase>
+			<cfcase value="m">
+				<cfreturn this.parseXMLResponseMedium(xmlXMLData = xmlParse(arguments.strXMLData))/>
+			</cfcase>
+			<cfcase value="b">
+				<cfreturn this.parseXMLResponseBasic(xmlXMLData = xmlParse(arguments.strXMLData))/>
+			</cfcase>
+			<cfcase value="c">
+
+				<cfquery name="local.qryData">
+					SELECT *
+					FROM test_data
+					<!--- small business???? --->
+					WHERE contractingofficerbusinesssizedetermination = <cfqueryparam value="S: SMALL BUSINESS" cfsqltype="cf_sql_varchar"/>
+					<cfif len(arguments.strSmallBusinessCategory)>
+						<cfswitch expression="#arguments.strSmallBusinessCategory#">
+							<cfcase value="none">
+								AND SRDVOBFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+								AND firm8AFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+								AND HUBZoneFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+								AND womenOwnedFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+								AND SDBFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+							</cfcase>
+							<cfcase value="disabledVetOwned">
+								WHERE SRDVOBFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+							</cfcase>
+							<cfcase value="8a">
+								WHERE firm8AFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+							</cfcase>
+							<cfcase value="HUBZone">
+								WHERE HUBZoneFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+							</cfcase>
+							<cfcase value="womanOwned">
+								WHERE womenOwnedFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+							</cfcase>
+							<cfcase value="smallDisadv">
+								WHERE SDBFlag IN (<cfqueryparam value="Y,true" list="true" cfsqltype="cf_sql_varchar"/>)
+							</cfcase>
+						</cfswitch>
+
+					</cfif>
+				</cfquery>
+
+				<cfreturn local.qryData/>
+
+			</cfcase>
+			<cfdefaultcase>
+				<cfreturn "No matching detail level."/>
+			</cfdefaultcase>
+		</cfswitch>
 
 	</cffunction>
 
@@ -1024,7 +1102,7 @@
 				WHERE contractingofficerbusinesssizedetermination = <cfqueryparam value="S: SMALL BUSINESS" cfsqltype="cf_sql_varchar"/>
 				<cfswitch expression="#arguments.strSmallBusinessCategory#">
 					<cfcase value="none">
-						WHERE SRDVOBFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
+						AND SRDVOBFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
 						AND firm8AFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
 						AND HUBZoneFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
 						AND womenOwnedFlag IN (<cfqueryparam value="N,false" list="true" cfsqltype="cf_sql_varchar"/>)
