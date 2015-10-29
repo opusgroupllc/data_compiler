@@ -213,7 +213,7 @@ Description :
 		<cfscript>
 			//Verify the coldbox app is ok, else throw
 			if ( not structKeyExists(application,COLDBOX_APP_KEY) ){
-				throw( message="ColdBox Controller Not Found", 
+				throw( message="ColdBox Controller Not Found",
 					   detail="The coldbox main controller has not been initialized",
 					   type="ColdBoxProxy.ControllerIllegalState");
 			}

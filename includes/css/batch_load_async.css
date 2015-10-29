@@ -19,3 +19,8 @@
 	border: solid 1px #ffcc00;
 	border-radius: 5px;  
 }
+
+a.data_loader_try_again, a.data_loader_try_again:hover, a.data_loader_try_again:active, a.data_loader_try_again:visited {
+	color: #ffffff; 
+	text-decoration: underline; 
+}

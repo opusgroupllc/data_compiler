@@ -29,6 +29,8 @@
 	addRoute(pattern = "/usaspending/:action?", handler = "usaspending", action = "batch_load_async");
 	addRoute(pattern = "/usaspending/:action?", handler = "usaspending", action = "deliver_spreadsheet");
 
+	addRoute(pattern = "/remote/:action?", remote = "DataProxy", action = "getDataSetJSON");
+
 	// Your Application Routes
 	addRoute(pattern=":handler/:action?");
 </cfscript>

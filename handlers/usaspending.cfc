@@ -37,7 +37,46 @@
 
 
 
+	<cffunction name="getDataSet">
+		<cfargument name="intRecordsFrom" type="numeric" default="1"/>
+		<cfargument name="detail" type="string" default="s"/>
 
+		<cftry>
+
+			<cfset local.stcURLParams = structNew()/>
+			<cfloop list="detail,records_from,max_records,stateCode,mod_agency,maj_agency_cat,fiscal_year" index="local.i">
+				<cfif structKeyExists(arguments.RC, local.i) AND len(trim(arguments.RC[local.i]))>
+					<cfset local.stcURLParams[local.i] = arguments.RC[local.i]/>
+				</cfif>
+			</cfloop>
+			<cffile action="write" file="c:\data_compiler_debug_arguments.txt" output="#serializeJSON(arguments)#"/>
+			<cffile action="write" file="c:\data_compiler_debug_urlParams.txt" output="#serializeJSON(local.stcURLParams)#"/>
+			<cfset local.objData = this.parseXMLResponse(
+				strDetailLevel = form.detail
+				, strXMLData = this.getXMLResponse(
+					stcURLParams = local.stcURLParams
+				).fileContent
+			)/>
+
+			<cfset local.bolLoadBatchProcessChunkSuccessful = this.loadBatchProcessChunk(
+				strBatchLoadProcessThreadId = "data_request_#arguments.intRecordsFrom#"
+				, qryData = local.objData
+				, intStartRow = arguments.intRecordsFrom
+			)/>
+
+			<cfreturn local.bolLoadBatchProcessChunkSuccessful/>
+
+			<cfcatch>
+				<cfreturn "Error Message: #cfcatch.Message#<br />"
+					& "Error Detail: #cfcatch.Detail#<br />"
+					& "Template: #cfcatch.TagContext[1].template#:#cfcatch.TagContext[1].line#<br /><br />"
+				/>
+				<cfreturn false/>
+			</cfcatch>
+
+		</cftry>
+
+	</cffunction>
 
 
 
@@ -111,7 +150,7 @@
 		<cfset request.form_action = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/d3_individual"/>
 		<cfset request.spreadsheet_url = "#cgi.https IS 'on' ? 'https' : 'http'#://#cgi.server_name##cgi.script_name#/usaspending/deliver_spreadsheet"/>
 
-		<cfset this.cleanBatchProcessTable()/>
+		<cfset this.initializeDataLoadProcess()/>
 
 		<!--- <cftry>
 			<cfthrow message="asdf"/>
@@ -218,7 +257,7 @@
 		TRACE_9
 	</cffunction>
 
-	<cffunction name="cleanBatchProcessTable" returnType="boolean">
+	<cffunction name="initializeDataLoadProcess" returnType="boolean">
 		<cftry>
 			<cfquery name="local.qryData">
 				TRUNCATE TABLE test_data
@@ -726,6 +765,8 @@
 	<cffunction name="parseXMLResponseComplete" returnType="query">
 		<cfargument name="xmlXMLData" type="xml" required="true"/>
 		<cfargument name="strSmallBusinessCategory" type="string" default=""/>
+
+		<cffile action="write" file="c:\data_compiler_debug_xml.txt" output="#arguments.xmlXMLData#"/>
 
 		<cfset local.lstSmallBusinessCategories = "none,smallBus,8a,womanOwned,smallDisadv,disabledVetOwned,HUBZone"/>
 		<cfif len(arguments.strSmallBusinessCategory)
